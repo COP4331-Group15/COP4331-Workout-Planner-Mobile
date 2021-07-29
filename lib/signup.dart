@@ -7,6 +7,14 @@ import 'calender.dart';
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({Key? key}) : super(key: key);
+  static const List<String> boxes = <String>[
+    'Username',
+    'Email',
+    'Password',
+    'Confirm Password'
+  ];
+
+  static const List<bool> hidden = <bool>[false, false, true, true];
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,12 +79,22 @@ class SignUpPage extends StatelessWidget {
                   ),
                 ],
               )),
-          ListView(padding: const EdgeInsets.all(2), children: [
-            Container(child: TextAuth(passedText: 'Username')),
-            Container(child: TextAuth(passedText: 'Password')),
-            Container(child: TextAuth(passedText: 'Confirm Password')),
-            Container(child: TextAuth(passedText: 'Email')),
-          ]),
+          Expanded(
+            child: ListView.separated(
+              scrollDirection: Axis.vertical,
+              padding: const EdgeInsets.all(2),
+              itemCount: boxes.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  height: 50,
+                  child: TextAuth(
+                      passedText: '${boxes[index]}', isHidden: hidden[index]),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(),
+            ),
+          ),
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
             Container(
                 margin: const EdgeInsets.all(5.0),

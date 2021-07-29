@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 
 class TextAuth extends StatefulWidget {
   final String passedText;
-  const TextAuth({Key? key, required this.passedText}) : super(key: key);
+  final bool isHidden;
+  const TextAuth({Key? key, required this.passedText, required this.isHidden})
+      : super(key: key);
 
   @override
   State<TextAuth> createState() => _TextAuth();
@@ -28,7 +30,12 @@ class _TextAuth extends State<TextAuth> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      obscureText: widget.isHidden,
       decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).accentColor, width: 5.0),
+        ),
         focusedBorder: OutlineInputBorder(
           borderSide:
               BorderSide(color: Theme.of(context).primaryColor, width: 5.0),
