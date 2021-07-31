@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "15112782049",
+    "project_id": "flutterworkoutplanner",
+    "storage_bucket": "flutterworkoutplanner.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15112782049:android:88a9b9aa0a3f9f8c3477a0",
+        "android_client_info": {
+          "package_name": "com.example.large_project_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "15112782049-vvg7lviedra5fj6tlokn0qvge8n482r2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCmgu2JeJfACIFksJfnI6pAiOtnVTGkFA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "15112782049-vvg7lviedra5fj6tlokn0qvge8n482r2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

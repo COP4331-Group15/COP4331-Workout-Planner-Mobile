@@ -6,9 +6,7 @@ import 'login.dart';
 import 'signup.dart';
 
 class HomePage extends StatelessWidget {
-  final String title;
-
-  const HomePage({Key? key, required this.title}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,7 +97,7 @@ class HomePage extends StatelessWidget {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      SignUpPage()),
+                                                      SignupPage()),
                                             );
                                           },
                                           style: ElevatedButton.styleFrom(
@@ -125,7 +123,7 @@ class HomePage extends StatelessWidget {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        LogInPage()),
+                                                        LoginPage()),
                                               );
                                             },
                                             style: ElevatedButton.styleFrom(

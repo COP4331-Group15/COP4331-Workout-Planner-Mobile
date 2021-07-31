@@ -1,18 +1,30 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'textauth.dart';
-import 'calender.dart';
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
 
-class LogInPage extends StatelessWidget {
-  const LogInPage({Key? key}) : super(key: key);
-  static const List<String> boxes = <String>[
-    'Username',
-    'Password',
-  ];
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _email = new TextEditingController();
+  final TextEditingController _password = new TextEditingController();
 
-  static const List<bool> hidden = <bool>[false, true];
+  Future<void> _createUser() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: _email.text, password: _password.text);
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      print("Error: $e");
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -77,21 +89,48 @@ class LogInPage extends StatelessWidget {
                 ],
               )),
           Expanded(
-            child: ListView.separated(
-              scrollDirection: Axis.vertical,
-              padding: const EdgeInsets.all(2),
-              itemCount: boxes.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  height: 50,
-                  child: TextAuth(
-                      passedText: '${boxes[index]}', isHidden: hidden[index]),
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) =>
-                  const Divider(),
-            ),
-          ),
+              child: ListView(
+                  scrollDirection: Axis.vertical,
+                  padding: const EdgeInsets.all(2),
+                  children: [
+                Container(
+                    margin: const EdgeInsets.all(5.0),
+                    height: 50,
+                    child: TextField(
+                      controller: _email,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).accentColor, width: 5.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor,
+                              width: 5.0),
+                        ),
+                        hintText: "Email",
+                      ),
+                    )),
+                Container(
+                    margin: const EdgeInsets.all(5.0),
+                    height: 50,
+                    child: TextField(
+                      controller: _password,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).accentColor, width: 5.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).primaryColor,
+                              width: 5.0),
+                        ),
+                        hintText: "Password",
+                      ),
+                    )),
+              ])),
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
             Container(
                 margin: const EdgeInsets.all(5.0),
@@ -118,10 +157,7 @@ class LogInPage extends StatelessWidget {
               width: MediaQuery.of(context).size.width / 2.5,
               child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => CalenderPage()),
-                    );
+                    _createUser();
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.green,
