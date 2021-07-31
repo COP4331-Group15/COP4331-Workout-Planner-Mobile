@@ -5,6 +5,8 @@ import 'package:table_calendar/table_calendar.dart';
 
 import '../utils/utils.dart';
 
+import 'split_page.dart';
+
 class CalenderPage extends StatefulWidget {
   @override
   _TableEventsExampleState createState() => _TableEventsExampleState();
@@ -89,12 +91,28 @@ class _TableEventsExampleState extends State<CalenderPage> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(
-            icon: Icon(Icons.backspace_rounded, color: Colors.black),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
+          PopupMenuButton<int>(
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 0,
+                child: Text("Split"),
+              ),
+              PopupMenuItem(
+                value: 1,
+                child: Text("Logout"),
+              ),
+            ],
+            onSelected: (result) async {
+              if (result == 0) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SplitPage()),
+                );
+              } else if (result == 1) {
+                await FirebaseAuth.instance.signOut();
+              }
             },
-          )
+          ),
         ],
         shape: Border(bottom: BorderSide(color: Colors.black, width: 2)),
         title: Container(
