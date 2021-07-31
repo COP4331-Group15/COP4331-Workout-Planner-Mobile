@@ -50,6 +50,9 @@ class LandingPage extends StatelessWidget {
                     } else {
                       return CalenderPage();
                     }
+                  } else if (snapshot.hasError) {
+                    final error = "snapshot.error";
+                    return Text(error.toString());
                   }
 
                   return Scaffold(

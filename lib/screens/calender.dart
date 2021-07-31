@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:large_project_app/utils/communication.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../utils.dart';
+import '../utils/utils.dart';
 
 class CalenderPage extends StatefulWidget {
   @override
@@ -27,6 +27,8 @@ class _TableEventsExampleState extends State<CalenderPage> {
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
     Communication.getSplit().then((value) => print(value));
+    Communication.getExerciseUser().then((value) => print(value));
+    Communication.getWorkoutUser().then((value) => print(value));
   }
 
   @override
