@@ -11,6 +11,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _email = new TextEditingController();
   final TextEditingController _password = new TextEditingController();
+  String errorMsg = "";
 
   Future<void> _createUser() async {
     try {
@@ -18,10 +19,8 @@ class _LoginPageState extends State<LoginPage> {
           .signInWithEmailAndPassword(
               email: _email.text, password: _password.text);
       Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
-      print("Error: $e");
-    } catch (e) {
-      print("Error: $e");
+    } on FirebaseException catch (e) {
+      errorMsg = e.message!;
     }
   }
 
@@ -94,6 +93,13 @@ class _LoginPageState extends State<LoginPage> {
                   padding: const EdgeInsets.all(2),
                   children: [
                 Container(
+                  margin: const EdgeInsets.all(5.0),
+                  child: Text(errorMsg,
+                      style: TextStyle(
+                        color: Colors.red,
+                      )),
+                ),
+                Container(
                     margin: const EdgeInsets.all(5.0),
                     height: 50,
                     child: TextField(
@@ -157,7 +163,9 @@ class _LoginPageState extends State<LoginPage> {
               width: MediaQuery.of(context).size.width / 2.5,
               child: ElevatedButton(
                   onPressed: () {
-                    _createUser();
+                    setState(() {
+                      _createUser();
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.green,

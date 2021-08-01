@@ -9,6 +9,7 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  String errorMsg = "";
   final TextEditingController _email = new TextEditingController();
   final TextEditingController _password = new TextEditingController();
 
@@ -18,10 +19,8 @@ class _SignupPageState extends State<SignupPage> {
           .createUserWithEmailAndPassword(
               email: _email.text, password: _password.text);
       Navigator.pop(context);
-    } on FirebaseAuthException catch (e) {
-      print("Error: $e");
-    } catch (e) {
-      print("Error: $e");
+    } on FirebaseException catch (e) {
+      errorMsg = e.message!;
     }
   }
 
@@ -93,6 +92,13 @@ class _SignupPageState extends State<SignupPage> {
                   scrollDirection: Axis.vertical,
                   padding: const EdgeInsets.all(2),
                   children: [
+                Container(
+                  margin: const EdgeInsets.all(5.0),
+                  child: Text(errorMsg,
+                      style: TextStyle(
+                        color: Colors.red,
+                      )),
+                ),
                 Container(
                     margin: const EdgeInsets.all(5.0),
                     height: 50,
