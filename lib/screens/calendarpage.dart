@@ -238,7 +238,7 @@ class _TableEventsExampleState extends State<CalendarPage> {
                                     child: Icon(Icons.close),
                                     style: ElevatedButton.styleFrom(
                                       primary: Colors.grey[300],
-                                      onPrimary: Colors.green[900],
+                                      onPrimary: Colors.grey[400],
                                       elevation: 0,
                                       shape: RoundedRectangleBorder(
                                           side: BorderSide(
