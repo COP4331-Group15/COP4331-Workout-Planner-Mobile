@@ -40,7 +40,7 @@ class Communication {
         headers: header,
         body: body);
     print(response.body);
-    return response.body;
+    return jsonDecode(response.body)["data"]["name"];
   }
 
   static Future<String> patchSplit(Map data) async {
@@ -92,7 +92,7 @@ class Communication {
     return Exercise.fromJSON(parse);
   }
 
-  static Future<Exercise> getExerciseSpecific($exerciseId) async {
+  static Future<Exercise> getExerciseSpecific(String exerciseId) async {
     User? user = FirebaseAuth.instance.currentUser;
     String _exerciseId = "";
 
@@ -110,7 +110,7 @@ class Communication {
     return Exercise.fromJSON(parse);
   }
 
-  static Future<String> postExercise(Map data, String exerciseId) async {
+  static Future<String> postExercise(Map data) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       print('Error: User not signed in');
@@ -119,11 +119,11 @@ class Communication {
     var body = json.encode(data);
     Map<String, String> header = await _getHeader();
     Response response = await http.post(
-        Uri.parse("$_baseUrl/exercise/${user.uid}/$exerciseId/create"),
+        Uri.parse("$_baseUrl/exercise/${user.uid}/create"),
         headers: header,
         body: body);
     print(response.body);
-    return response.body;
+    return jsonDecode(response.body)["data"]["name"];
   }
 
   static Future<String> patchExercise(Map data, String exerciseId) async {
@@ -161,7 +161,7 @@ class Communication {
 
     if (user == null) {
       print('Error: User not signed in');
-      return Workout("", false, []);
+      return Workout(0, false, []);
     }
 
     Map<String, String> header = await _getHeader();
@@ -178,12 +178,12 @@ class Communication {
 
     if (user == null) {
       print('Error: User not signed in');
-      return Workout("", false, []);
+      return Workout(0, false, []);
     }
 
     Map<String, String> header = await _getHeader();
     Response response = await http.get(
-        Uri.parse("$_baseUrl/exercise/${user.uid}/$workoutId"),
+        Uri.parse("$_baseUrl/workout/${user.uid}/$workoutId"),
         headers: header);
     print(response.body);
     Map parse = jsonDecode(response.body);
@@ -203,7 +203,7 @@ class Communication {
         headers: header,
         body: body);
     print(response.body);
-    return response.body;
+    return jsonDecode(response.body)["data"]["name"];
   }
 
   static Future<String> patchWorkout(Map data, String workoutId) async {
@@ -229,7 +229,7 @@ class Communication {
       return "";
     }
     Map<String, String> header = await _getHeader();
-    Response response = await http.patch(
+    Response response = await http.delete(
         Uri.parse("$_baseUrl/workout/${user.uid}/$workoutId/delete"),
         headers: header);
     print(response.body);

@@ -6,6 +6,8 @@ class Exercise {
   int duration;
   int resistance;
 
+  String id = "";
+
   Exercise(this.muscleGroup, this.name, this.sets, this.repititions,
       this.duration, this.resistance);
 
