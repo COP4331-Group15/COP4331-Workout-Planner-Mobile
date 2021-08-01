@@ -205,54 +205,58 @@ class _TableEventsExampleState extends State<CalendarPage> {
                       itemCount: value.length,
                       itemBuilder: (context, index) {
                         return Container(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 12.0,
-                            vertical: 4.0,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(),
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 5),
-                                  child: ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => EditPage()),
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                          elevation: 0, primary: Colors.white),
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 12.0,
+                              vertical: 4.0,
+                            ),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => EditPage()),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      side: BorderSide(
+                                          color: Colors.black,
+                                          width: 1,
+                                          style: BorderStyle.solid),
+                                      borderRadius: BorderRadius.circular(20)),
+                                  elevation: 0,
+                                  primary: Colors.white),
+                              child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
                                       child: Text('${value[index]}',
                                           style:
-                                              TextStyle(color: Colors.black))),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 5),
-                                  child: ElevatedButton(
-                                    child: Icon(Icons.close),
-                                    style: ElevatedButton.styleFrom(
-                                      primary: Colors.grey[300],
-                                      onPrimary: Colors.grey[400],
-                                      elevation: 0,
-                                      shape: RoundedRectangleBorder(
-                                          side: BorderSide(
-                                              color: Colors.black,
-                                              width: 1,
-                                              style: BorderStyle.solid),
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
+                                              TextStyle(color: Colors.black)),
                                     ),
-                                    onPressed: () {},
-                                  ),
-                                )
-                              ]),
-                        );
+                                    Container(
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 5),
+                                      child: ElevatedButton(
+                                        child: Icon(Icons.close),
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.grey[300],
+                                          onPrimary: Colors.grey[400],
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                              side: BorderSide(
+                                                  color: Colors.black,
+                                                  width: 1,
+                                                  style: BorderStyle.solid),
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                                    ),
+                                  ]),
+                            ));
                       },
                     );
                   },
