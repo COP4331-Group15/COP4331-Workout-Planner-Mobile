@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:large_project_app/widgets/appbar.dart';
 
 import 'login.dart';
 import 'signup.dart';
@@ -10,38 +11,7 @@ class HomePage extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          shape: Border(bottom: BorderSide(color: Colors.black, width: 2)),
-          title: Container(
-              margin: const EdgeInsets.all(5.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Hercules\'',
-                    style: TextStyle(
-                        fontFamily: 'ChunkFive',
-                        fontSize: 25,
-                        color: Colors.black),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.all(5.0),
-                    child: Image.asset(
-                      'assets/dumbell.png',
-                      width: 75,
-                      height: 45,
-                    ),
-                  ),
-                  Text(
-                    'Notebook',
-                    style: TextStyle(
-                        fontFamily: 'ChunkFive',
-                        fontSize: 25,
-                        color: Colors.black),
-                  ),
-                ],
-              )),
-        ),
+        appBar: AppBar(title: CustomAppBar()),
         body: Container(
             decoration: BoxDecoration(
                 image: DecorationImage(

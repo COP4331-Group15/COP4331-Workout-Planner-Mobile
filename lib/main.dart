@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:large_project_app/screens/calender.dart';
+import 'package:large_project_app/screens/calendarpage.dart';
 
 import 'screens/homepage.dart';
 
@@ -48,7 +48,7 @@ class LandingPage extends StatelessWidget {
                     if (user == null) {
                       return HomePage();
                     } else {
-                      return CalenderPage();
+                      return CalendarPage();
                     }
                   } else if (snapshot.hasError) {
                     final error = "snapshot.error";

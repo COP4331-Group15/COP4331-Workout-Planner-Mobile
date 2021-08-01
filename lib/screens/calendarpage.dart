@@ -1,18 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:large_project_app/data/calendar.dart';
 import 'package:large_project_app/utils/communication.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../utils/utils.dart';
 
+import 'edit.dart';
 import 'split_page.dart';
 
-class CalenderPage extends StatefulWidget {
+class CalendarPage extends StatefulWidget {
   @override
   _TableEventsExampleState createState() => _TableEventsExampleState();
 }
 
-class _TableEventsExampleState extends State<CalenderPage> {
+class _TableEventsExampleState extends State<CalendarPage> {
   late final ValueNotifier<List<Event>> _selectedEvents;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
@@ -21,6 +23,7 @@ class _TableEventsExampleState extends State<CalenderPage> {
   DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
+  Calendar? userCalendar;
 
   @override
   void initState() {
@@ -31,6 +34,10 @@ class _TableEventsExampleState extends State<CalenderPage> {
     Communication.getSplit().then((value) => print(value));
     Communication.getExerciseUser().then((value) => print(value));
     Communication.getWorkoutUser().then((value) => print(value));
+    Communication.getCalendar(_focusedDay.year, _focusedDay.month - 1)
+        .then((value) => setState(() {
+              userCalendar = value;
+            }));
   }
 
   @override
@@ -177,31 +184,82 @@ class _TableEventsExampleState extends State<CalenderPage> {
           ),
           const SizedBox(height: 8.0),
           Expanded(
-            child: ValueListenableBuilder<List<Event>>(
-              valueListenable: _selectedEvents,
-              builder: (context, value, _) {
-                return ListView.builder(
-                  itemCount: value.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 12.0,
-                        vertical: 4.0,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: ListTile(
-                        onTap: () => print('${value[index]}'),
-                        title: Text('${value[index]}'),
-                      ),
+            child: Column(children: [
+              Container(
+                  margin: EdgeInsets.all(15),
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    child: Icon(Icons.add),
+                    style: ElevatedButton.styleFrom(
+                      primary: Theme.of(context).accentColor,
+                      onPrimary: Colors.green[900],
+                      elevation: 10,
+                    ),
+                    onPressed: () {},
+                  )),
+              Expanded(
+                child: ValueListenableBuilder<List<Event>>(
+                  valueListenable: _selectedEvents,
+                  builder: (context, value, _) {
+                    return ListView.builder(
+                      itemCount: value.length,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 12.0,
+                            vertical: 4.0,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 5),
+                                  child: ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => EditPage()),
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                          elevation: 0, primary: Colors.white),
+                                      child: Text('${value[index]}',
+                                          style:
+                                              TextStyle(color: Colors.black))),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 5),
+                                  child: ElevatedButton(
+                                    child: Icon(Icons.close),
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Colors.grey[300],
+                                      onPrimary: Colors.green[900],
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                          side: BorderSide(
+                                              color: Colors.black,
+                                              width: 1,
+                                              style: BorderStyle.solid),
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                    ),
+                                    onPressed: () {},
+                                  ),
+                                )
+                              ]),
+                        );
+                      },
                     );
                   },
-                );
-              },
-            ),
-          ),
+                ),
+              ),
+            ]),
+          )
         ],
       ),
     );

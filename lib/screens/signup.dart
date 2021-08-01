@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:large_project_app/widgets/appbar.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -20,44 +21,15 @@ class _SignupPageState extends State<SignupPage> {
               email: _email.text, password: _password.text);
       Navigator.pop(context);
     } on FirebaseException catch (e) {
-      errorMsg = e.message!;
+      setState(() {
+        errorMsg = e.message!;
+      });
     }
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          shape: Border(bottom: BorderSide(color: Colors.black, width: 2)),
-          title: Container(
-              margin: const EdgeInsets.all(5.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Hercules\'',
-                    style: TextStyle(
-                        fontFamily: 'ChunkFive',
-                        fontSize: 20,
-                        color: Colors.black),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.all(5.0),
-                    child: Image.asset(
-                      'assets/dumbell.png',
-                      width: 70,
-                      height: 40,
-                    ),
-                  ),
-                  Text(
-                    'Notebook',
-                    style: TextStyle(
-                        fontFamily: 'ChunkFive',
-                        fontSize: 20,
-                        color: Colors.black),
-                  ),
-                ],
-              )),
-        ),
+        appBar: AppBar(title: CustomAppBar()),
         body: Column(children: [
           Container(
               decoration: BoxDecoration(

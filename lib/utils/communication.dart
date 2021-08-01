@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:large_project_app/data/calendar.dart';
 import 'package:large_project_app/data/exercise.dart';
 import 'package:large_project_app/data/split.dart';
 import 'package:large_project_app/data/workout.dart';
@@ -233,5 +234,45 @@ class Communication {
         headers: header);
     print(response.body);
     return response.body;
+  }
+
+  static Future<Calendar> getCalendar(int year, int month) async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      print('Error: User not signed in');
+      return Calendar([]);
+    }
+
+    Map<String, String> header = await _getHeader();
+    Response response = await http.get(
+        Uri.parse("$_baseUrl/calendar/${user.uid}/$year/$month"),
+        headers: header);
+    print(response.body);
+    Map parse = jsonDecode(response.body);
+    return Calendar.fromJSON(parse);
+  }
+
+  static Future<Map<String, Exercise>> getExerciseFromCalender(
+      int year, int month, int day) async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      print('Error: User not signed in');
+      return {};
+    }
+
+    Map<String, String> header = await _getHeader();
+    Response response = await http.get(
+        Uri.parse("$_baseUrl/calendar/${user.uid}/$year/$month/$day/exercises"),
+        headers: header);
+    print(response.body);
+    Map parse = jsonDecode(response.body);
+    Map<String, Exercise> exerciseList = {};
+    for (MapEntry entry in parse["exercises"]) {
+      exerciseList[entry.key] = Exercise.fromJSON(entry.value);
+    }
+
+    return exerciseList;
   }
 }

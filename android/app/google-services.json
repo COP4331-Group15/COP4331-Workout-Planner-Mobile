@@ -1,33 +1,34 @@
 {
   "project_info": {
-    "project_number": "15112782049",
-    "project_id": "flutterworkoutplanner",
-    "storage_bucket": "flutterworkoutplanner.appspot.com"
+    "project_number": "739248890237",
+    "firebase_url": "https://cop4331-group15-default-rtdb.firebaseio.com",
+    "project_id": "cop4331-group15",
+    "storage_bucket": "cop4331-group15.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:15112782049:android:88a9b9aa0a3f9f8c3477a0",
+        "mobilesdk_app_id": "1:739248890237:android:ed1845d57fec93782dac14",
         "android_client_info": {
           "package_name": "com.example.large_project_app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "15112782049-vvg7lviedra5fj6tlokn0qvge8n482r2.apps.googleusercontent.com",
+          "client_id": "739248890237-otst1gop6a4l27pdaj40kd3fjs4bh1jl.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDCmgu2JeJfACIFksJfnI6pAiOtnVTGkFA"
+          "current_key": "AIzaSyDfSBHco-5qRhB38KayLjUMfWVaypuQtx8"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "15112782049-vvg7lviedra5fj6tlokn0qvge8n482r2.apps.googleusercontent.com",
+              "client_id": "739248890237-otst1gop6a4l27pdaj40kd3fjs4bh1jl.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
