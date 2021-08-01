@@ -92,7 +92,7 @@ class Communication {
     return Exercise.fromJSON(parse);
   }
 
-  static Future<Exercise> getExerciseSpecific() async {
+  static Future<Exercise> getExerciseSpecific($exerciseId) async {
     User? user = FirebaseAuth.instance.currentUser;
     String _exerciseId = "";
 
@@ -103,14 +103,14 @@ class Communication {
 
     Map<String, String> header = await _getHeader();
     Response response = await http.get(
-        Uri.parse("$_baseUrl/exercise/${user.uid}/$_exerciseId"),
+        Uri.parse("$_baseUrl/exercise/${user.uid}/$exerciseId"),
         headers: header);
     print(response.body);
     Map parse = jsonDecode(response.body);
     return Exercise.fromJSON(parse);
   }
 
-  static Future<String> postExercise(Map data, String ex_id) async {
+  static Future<String> postExercise(Map data, String exerciseId) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       print('Error: User not signed in');
@@ -119,14 +119,14 @@ class Communication {
     var body = json.encode(data);
     Map<String, String> header = await _getHeader();
     Response response = await http.post(
-        Uri.parse("$_baseUrl/exercise/${user.uid}/${ex_id}/create"),
+        Uri.parse("$_baseUrl/exercise/${user.uid}/$exerciseId/create"),
         headers: header,
         body: body);
     print(response.body);
     return response.body;
   }
 
-  static Future<String> patchExercise(Map data, String ex_id) async {
+  static Future<String> patchExercise(Map data, String exerciseId) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       print('Error: User not signed in');
@@ -135,14 +135,14 @@ class Communication {
     var body = json.encode(data);
     Map<String, String> header = await _getHeader();
     Response response = await http.patch(
-        Uri.parse("$_baseUrl/exercise/${user.uid}/${ex_id}/update"),
+        Uri.parse("$_baseUrl/exercise/${user.uid}/$exerciseId/update"),
         headers: header,
         body: body);
     print(response.body);
     return response.body;
   }
 
-  static Future<String> deleteExercise(String ex_id) async {
+  static Future<String> deleteExercise(String exerciseId) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       print('Error: User not signed in');
@@ -150,7 +150,7 @@ class Communication {
     }
     Map<String, String> header = await _getHeader();
     Response response = await http.delete(
-        Uri.parse("$_baseUrl/exercise/${user.uid}/${ex_id}/delete"),
+        Uri.parse("$_baseUrl/exercise/${user.uid}/$exerciseId/delete"),
         headers: header);
     print(response.body);
     return response.body;
@@ -172,7 +172,7 @@ class Communication {
     return Workout.fromJSON(parse);
   }
 
-  static Future<Workout> getWorkoutSpecific() async {
+  static Future<Workout> getWorkoutSpecific(String workoutId) async {
     User? user = FirebaseAuth.instance.currentUser;
     String _workoutId = "";
 
@@ -183,7 +183,7 @@ class Communication {
 
     Map<String, String> header = await _getHeader();
     Response response = await http.get(
-        Uri.parse("$_baseUrl/exercise/${user.uid}/$_workoutId"),
+        Uri.parse("$_baseUrl/exercise/${user.uid}/$workoutId"),
         headers: header);
     print(response.body);
     Map parse = jsonDecode(response.body);
@@ -206,7 +206,7 @@ class Communication {
     return response.body;
   }
 
-  static Future<String> patchWorkout(Map data, String w_id) async {
+  static Future<String> patchWorkout(Map data, String workoutId) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       print('Error: User not signed in');
@@ -215,14 +215,14 @@ class Communication {
     var body = json.encode(data);
     Map<String, String> header = await _getHeader();
     Response response = await http.patch(
-        Uri.parse("$_baseUrl/workout/${user.uid}/${w_id}/update"),
+        Uri.parse("$_baseUrl/workout/${user.uid}/$workoutId/update"),
         headers: header,
         body: body);
     print(response.body);
     return response.body;
   }
 
-  static Future<String> deleteWorkout(String w_id) async {
+  static Future<String> deleteWorkout(String workoutId) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       print('Error: User not signed in');
@@ -230,7 +230,7 @@ class Communication {
     }
     Map<String, String> header = await _getHeader();
     Response response = await http.patch(
-        Uri.parse("$_baseUrl/workout/${user.uid}/${w_id}/delete"),
+        Uri.parse("$_baseUrl/workout/${user.uid}/$workoutId/delete"),
         headers: header);
     print(response.body);
     return response.body;

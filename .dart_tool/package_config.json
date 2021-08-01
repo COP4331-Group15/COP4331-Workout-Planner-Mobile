@@ -44,6 +44,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "drag_and_drop_lists",
+      "rootUri": "file:///C:/Users/Isaiah/Documents/flutter/.pub-cache/hosted/pub.dartlang.org/drag_and_drop_lists-0.3.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "fake_async",
       "rootUri": "file:///C:/Users/Isaiah/Documents/flutter/.pub-cache/hosted/pub.dartlang.org/fake_async-1.2.0",
       "packageUri": "lib/",
@@ -230,7 +236,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2021-07-31T15:00:28.526327Z",
+  "generated": "2021-08-01T05:32:49.526752Z",
   "generator": "pub",
   "generatorVersion": "2.13.4"
 }

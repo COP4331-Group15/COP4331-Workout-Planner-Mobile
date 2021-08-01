@@ -28,7 +28,9 @@ class _TableEventsExampleState extends State<CalenderPage> {
 
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
-    Communication.getSplit().then((value) => print(value));
+    Communication.getSplit().then((value) {
+      print(value);
+    });
     Communication.getExerciseUser().then((value) => print(value));
     Communication.getWorkoutUser().then((value) => print(value));
   }

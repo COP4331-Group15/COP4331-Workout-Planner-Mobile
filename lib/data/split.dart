@@ -8,8 +8,13 @@ class Split {
   Split(this.startDate, this.startMonth, this.startYear, this.workouts);
 
   factory Split.fromJSON(Map json) {
-    return new Split(json["StartDate"], json["StartMonth"], json["StartYear"],
-        json["Workouts"].cast<String>());
+    if (json["Workouts"] == null) {
+      return new Split(
+          json["StartDate"], json["StartMonth"], json["StartYear"], []);
+    } else {
+      return new Split(json["StartDate"], json["StartMonth"], json["StartYear"],
+          json["Workouts"].cast<String>());
+    }
   }
 
   Map toJson() {
