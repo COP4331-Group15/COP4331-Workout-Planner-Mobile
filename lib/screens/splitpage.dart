@@ -241,8 +241,8 @@ class _SplitPageState extends State<SplitPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => EditExercisePage(
-                                selectedExercise, selectedWorkout)),
+                            builder: (context) =>
+                                EditExercisePage(selectedExercise!)),
                       );
                     },
                     style: ElevatedButton.styleFrom(

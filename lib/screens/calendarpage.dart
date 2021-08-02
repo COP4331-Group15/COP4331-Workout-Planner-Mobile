@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:large_project_app/data/calendar.dart';
 import 'package:large_project_app/data/exercise.dart';
 import 'package:large_project_app/data/workout.dart';
+import 'package:large_project_app/screens/editExercises.dart';
 import 'package:large_project_app/utils/communication.dart';
 import 'package:large_project_app/widgets/appbar.dart';
 import 'package:large_project_app/widgets/exercise_list_entry.dart';
@@ -12,7 +13,6 @@ import 'package:large_project_app/widgets/workout_edit_dialog.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../utils/utils.dart';
-import 'editWorkout.dart';
 import 'splitpage.dart';
 
 class CalendarPage extends StatefulWidget {
@@ -241,7 +241,8 @@ class _TableEventsExampleState extends State<CalendarPage> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    EditWorkoutPage()),
+                                                    EditExercisePage(
+                                                        snapshot.data![index])),
                                           ),
                                       title: '${snapshot.data?[index].name}');
                                 },

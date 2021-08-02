@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:large_project_app/data/workout.dart';
-import 'package:large_project_app/data/exercise.dart';
 import 'package:large_project_app/utils/communication.dart';
 import 'package:large_project_app/widgets/appbar.dart';
 
