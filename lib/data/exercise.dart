@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 class Exercise {
   String muscleGroup;
   String name;
@@ -7,6 +9,7 @@ class Exercise {
   int resistance;
 
   String id = "";
+  Color icon_color = Color(0xFF000000);
 
   Exercise(this.muscleGroup, this.name, this.sets, this.repititions,
       this.duration, this.resistance);

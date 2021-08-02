@@ -23,9 +23,9 @@ class _SplitPageState extends State<SplitPage> {
   DateTime selectedDate = DateTime.now();
   Split Split_d = new Split(-1, -1, -1, []);
   List<Workout> workouts = [];
-  List<Color> w_colors = [];
   Workout? selectedWorkout;
   Exercise? selectedExercise;
+  int selectedState = 0; //0 none, 1 workout, 2 exercise
 
   @override
   void initState() {
@@ -61,12 +61,52 @@ class _SplitPageState extends State<SplitPage> {
     });
   }
 
-  List<DragAndDropItem> getDnDListExercises(int index) {
+  List<DragAndDropItem> getDnDListExercises(Workout w) {
     List<DragAndDropItem> thelist = [];
-    workouts[index].exercises.forEach((e) {
+    w.exercises_content.asMap().forEach((index, e) {
       thelist.add(DragAndDropItem(
         child: Container(
-            height: 30, width: double.infinity, child: Text('sgytgtffffff')),
+            height: 50,
+            width: double.infinity,
+            child: Row(
+              children: [
+                Text('Header exercise : $index'),
+                Expanded(child: Text("")),
+                IconButton(
+                  icon: const Icon(Icons.circle),
+                  tooltip: 'Select',
+                  color: e.icon_color,
+                  onPressed: () {
+                    setState(() {
+                      //if (w.id == selectedWorkout?.id) {}
+                      if (selectedState == 1) {
+                        selectedState = 2;
+                        selectedWorkout?.icon_color = Color(0xFF000000);
+                        selectedExercise = e;
+                        selectedWorkout = w;
+                        e.icon_color = Color(0xFF4CAF50);
+                      } else {
+                        selectedState = 2;
+                        if (selectedExercise == null) {
+                          selectedExercise = e;
+                          selectedWorkout = w;
+                          e.icon_color = Color(0xFF4CAF50);
+                        } else if (e.id != selectedExercise?.id) {
+                          selectedExercise?.icon_color = Color(0xFF000000);
+                          selectedExercise = e;
+                          selectedWorkout = w;
+                          e.icon_color = Color(0xFF4CAF50);
+                        } else {
+                          selectedExercise?.icon_color = Color(0xFF000000);
+                          selectedExercise = null;
+                          selectedWorkout = null;
+                        }
+                      }
+                    });
+                  },
+                )
+              ],
+            )),
       ));
     });
     return thelist;
@@ -74,9 +114,8 @@ class _SplitPageState extends State<SplitPage> {
 
   List<DragAndDropList> allListfunc() {
     List<DragAndDropList> thelist = [];
-    debugPrint("lvoe: " + workouts.toString());
     workouts.asMap().forEach((index, w) {
-      List<DragAndDropItem> anotherlist = getDnDListExercises(index);
+      List<DragAndDropItem> anotherlist = getDnDListExercises(w);
       thelist.add(DragAndDropList(
         header: Container(
             height: 50,
@@ -90,16 +129,25 @@ class _SplitPageState extends State<SplitPage> {
                   color: w.icon_color,
                   onPressed: () {
                     setState(() {
-                      if (selectedWorkout == null) {
-                        selectedWorkout = w;
-                        w.icon_color = Color(0xFF4CAF50);
-                      } else if (w.id != selectedWorkout?.id) {
-                        selectedWorkout?.icon_color = Color(0xFF000000);
+                      if (selectedState == 2) {
+                        selectedState = 1;
+                        selectedExercise?.icon_color = Color(0xFF000000);
+                        selectedExercise = null;
                         selectedWorkout = w;
                         w.icon_color = Color(0xFF4CAF50);
                       } else {
-                        selectedWorkout?.icon_color = Color(0xFF000000);
-                        selectedWorkout = null;
+                        selectedState = 1;
+                        if (selectedWorkout == null) {
+                          selectedWorkout = w;
+                          w.icon_color = Color(0xFF4CAF50);
+                        } else if (w.id != selectedWorkout?.id) {
+                          selectedWorkout?.icon_color = Color(0xFF000000);
+                          selectedWorkout = w;
+                          w.icon_color = Color(0xFF4CAF50);
+                        } else {
+                          selectedWorkout?.icon_color = Color(0xFF000000);
+                          selectedWorkout = null;
+                        }
                       }
                     });
                   },
@@ -198,9 +246,10 @@ class _SplitPageState extends State<SplitPage> {
                             child: Text("Delete"),
                             onPressed: () {
                               setState(() {
-                                if (selectedWorkout != null) {
+                                if (selectedWorkout != null &&
+                                    selectedState == 1) {
                                   Workout selectedWorkout2 = selectedWorkout ??
-                                      new Workout(2667, false, []);
+                                      new Workout(0, false, []);
                                   setState(() {
                                     Communication.deleteWorkout(
                                             selectedWorkout2.id)
@@ -263,14 +312,66 @@ class _SplitPageState extends State<SplitPage> {
                         icon: const Icon(Icons.remove),
                         tooltip: 'Delete Exercise',
                         onPressed: () {
-                          debugPrint("Deletebutttex");
+                          Widget cancelButton = TextButton(
+                            child: Text("Cancel"),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          );
+                          Widget continueButton = TextButton(
+                            child: Text("Delete"),
+                            onPressed: () {
+                              setState(() {
+                                if (selectedExercise != null &&
+                                    selectedWorkout != null &&
+                                    selectedState == 2) {
+                                  Exercise selectedExercise2 =
+                                      selectedExercise ??
+                                          new Exercise("", "", 0, 0, 0, 0);
+                                  Workout selectedWorkout2 = selectedWorkout ??
+                                      new Workout(0, false, []);
+                                  setState(() {
+                                    Communication.deleteExercise(
+                                            selectedExercise2.id)
+                                        .then((value) {
+                                      setState(() {
+                                        selectedWorkout2.exercises.removeWhere(
+                                            (e) => e == selectedExercise2.id);
+                                        selectedWorkout2.exercises_content
+                                            .removeWhere((e) =>
+                                                e.id == selectedExercise2.id);
+                                        updateWorkout(selectedWorkout2);
+                                        Navigator.pop(context);
+                                      });
+                                    });
+                                  });
+                                } else {
+                                  Navigator.pop(context);
+                                }
+                              });
+                            },
+                          );
+                          AlertDialog alert = AlertDialog(
+                            title: Text("Delete Exercise"),
+                            content: Text(
+                                "Do you want to delete the selected exercise?"),
+                            actions: [
+                              cancelButton,
+                              continueButton,
+                            ],
+                          );
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return alert;
+                            },
+                          );
                         },
                       ),
                       IconButton(
                         icon: const Icon(Icons.add),
                         tooltip: 'Add Exercise',
                         onPressed: () {
-                          debugPrint("adddddbutex");
                           if (selectedWorkout != null) {
                             Workout selectedWorkout2 =
                                 selectedWorkout ?? new Workout(0, false, []);
@@ -316,17 +417,16 @@ class _SplitPageState extends State<SplitPage> {
             onItemReorder: _onItemReorder,
             onListReorder: _onListReorder,
           ),
-        ),
-        Text('You have pressed the button $_count times.')
+        )
       ]),
       backgroundColor: Colors.white,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() => {_count++});
-        },
-        tooltip: 'Increment Counter',
-        child: const Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     setState(() => {_count++});
+      //   },
+      //   tooltip: 'Increment Counter',
+      //   child: const Icon(Icons.add),
+      // ),
     );
   }
 
