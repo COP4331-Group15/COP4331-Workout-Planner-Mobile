@@ -17,6 +17,7 @@ class CalendarPage extends StatefulWidget {
 
 class _TableEventsExampleState extends State<CalendarPage> {
   Future<List<Exercise>> _exercises = Future<List<Exercise>>.value([]);
+  DateTime? _loadedExerciseDay;
   late final ValueNotifier<Workout> _selectedWorkouts;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
@@ -32,6 +33,8 @@ class _TableEventsExampleState extends State<CalendarPage> {
     Communication.getCalendar(_focusedDay.year, _focusedDay.month - 1)
         .then((value) => setState(() {
               userCalendar = value;
+              _exercises = refreshExercises(
+                  _getWorkoutPerDay(_selectedDay!), _selectedDay!);
             }));
   }
 
@@ -54,12 +57,14 @@ class _TableEventsExampleState extends State<CalendarPage> {
     List<Exercise> exercises;
     if (dayWorkout.id.isEmpty) {
       // This workout is day specific.
-      exercises =
-          await Communication.getExercisesPerDate(day.year, day.month, day.day);
+      exercises = await Communication.getExercisesPerDate(
+          day.year, day.month - 1, day.day);
     } else {
       // This workout is generic.
       exercises = await Communication.getExercisesPerWorkout(dayWorkout.id);
     }
+
+    _loadedExerciseDay = day;
 
     return exercises;
   }
@@ -211,13 +216,20 @@ class _TableEventsExampleState extends State<CalendarPage> {
                     return FutureBuilder<List<Exercise>>(
                         future: _exercises,
                         builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return Text(
+                                "Error loading exercises: ${snapshot.error}");
+                          }
                           if (!snapshot.hasData ||
-                              snapshot.data?.length != value.exercises.length) {
+                              _loadedExerciseDay != _selectedDay) {
                             return Text("Loading Exercises");
                           }
                           return ListView.builder(
                             itemCount: value.exercises.length,
                             itemBuilder: (context, index) {
+                              if (index >= snapshot.data!.length) {
+                                return Container();
+                              }
                               return Container(
                                   margin: const EdgeInsets.symmetric(
                                     horizontal: 12.0,
@@ -305,7 +317,8 @@ class _TableEventsExampleState extends State<CalendarPage> {
                                                       .patchDateSpecificWorkout(
                                                           value.toJson(),
                                                           _selectedDay!.year,
-                                                          _selectedDay!.month,
+                                                          _selectedDay!.month -
+                                                              1,
                                                           _selectedDay!.day);
                                                 }
                                               },
