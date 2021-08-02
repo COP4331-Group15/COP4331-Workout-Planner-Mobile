@@ -6,8 +6,7 @@ import 'package:large_project_app/utils/communication.dart';
 
 class EditExercisePage extends StatefulWidget {
   final Exercise selectedExercise;
-  final Workout selectedWorkout;
-  EditExercisePage(this.selectedExercise, this.selectedWorkout);
+  EditExercisePage(this.selectedExercise);
 
   @override
   _EditPageState createState() => _EditPageState();

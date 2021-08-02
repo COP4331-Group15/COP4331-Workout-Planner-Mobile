@@ -475,8 +475,7 @@ class _SplitPageState extends State<SplitPage> {
                           MaterialPageRoute(
                               builder: (context) => EditExercisePage(
                                   selectedExercise ??
-                                      new Exercise("", "", 0, 0, 0, 0),
-                                  selectedWorkout ?? new Workout(0, 0, []))),
+                                      new Exercise("", "", 0, 0, 0, 0))),
                         );
                         workouts[selectedWorkoutIndex ?? -1]
                                 .exercisesContent[selectedExerciseIndex ?? -1] =
