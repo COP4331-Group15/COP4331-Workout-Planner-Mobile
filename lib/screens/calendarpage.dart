@@ -168,8 +168,16 @@ class _TableEventsExampleState extends State<CalendarPage> {
                     child: Row(
                       children: [
                         Text(
-                          "Workout on ${_selectedDay!.month}/${_selectedDay!.day}",
-                          style: Theme.of(context).textTheme.subtitle1,
+                          "${_getWorkoutPerDay(_focusedDay).id.isEmpty ? "Custom " : ""}Workout on ${_selectedDay!.month}/${_selectedDay!.day}",
+                          style: Theme.of(context)
+                              .textTheme
+                              .subtitle1!
+                              .copyWith(
+                                  fontWeight: (_getWorkoutPerDay(_focusedDay)
+                                          .id
+                                          .isEmpty)
+                                      ? FontWeight.bold
+                                      : FontWeight.normal),
                           textAlign: TextAlign.start,
                         ),
                         Expanded(
@@ -177,7 +185,10 @@ class _TableEventsExampleState extends State<CalendarPage> {
                             alignment: Alignment.centerRight,
                             child: IconButton(
                               icon: Icon(Icons.edit),
-                              onPressed: _onEditWorkoutPressed,
+                              onPressed:
+                                  (_getWorkoutPerDay(_focusedDay).id.isEmpty)
+                                      ? _onEditWorkoutPressed
+                                      : null,
                             ),
                           ),
                         )
