@@ -8,6 +8,7 @@ import 'package:large_project_app/data/workout.dart';
 import 'package:large_project_app/utils/communication.dart';
 import 'package:large_project_app/widgets/appbar.dart';
 import 'package:large_project_app/widgets/exercise_list_entry.dart';
+import 'package:large_project_app/widgets/workout_edit_dialog.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../utils/utils.dart';
@@ -159,62 +160,113 @@ class _TableEventsExampleState extends State<CalendarPage> {
           ),
           const SizedBox(height: 8.0),
           Expanded(
-            child: Column(children: [
-              Container(
-                  margin: EdgeInsets.all(15),
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    child: Icon(Icons.add),
-                    style: ElevatedButton.styleFrom(
-                      primary: Theme.of(context).accentColor,
-                      onPrimary: Colors.green[900],
-                      elevation: 10,
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Workout on ${_selectedDay!.month}/${_selectedDay!.day}",
+                          style: Theme.of(context).textTheme.subtitle1,
+                          textAlign: TextAlign.start,
+                        ),
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.centerRight,
+                            child: IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: _onEditWorkoutPressed,
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                    onPressed: _onAddPressed,
-                  )),
-              Expanded(
-                // Update the following contents whenever the selected workout changes...
-                child: ValueListenableBuilder<Workout>(
-                  valueListenable: _selectedWorkouts,
-                  builder: (context, value, _) {
-                    // Update the following contents whenever the exercises list is loaded
-                    return StreamBuilder<List<Exercise>?>(
-                        stream: _exercises,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError) {
-                            return Text(
-                                "Error loading exercises: ${snapshot.error}");
-                          }
-                          if (!snapshot.hasData || snapshot.data == null) {
-                            return Text("Loading Exercises");
-                          }
-                          return ListView.builder(
-                            itemCount: value.exercises.length,
-                            itemBuilder: (context, index) {
-                              if (index >= snapshot.data!.length) {
-                                return Container();
+                  ),
+                  Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        child: Icon(Icons.add),
+                        style: ElevatedButton.styleFrom(
+                          primary: Theme.of(context).accentColor,
+                          onPrimary: Colors.green[900],
+                          elevation: 10,
+                        ),
+                        onPressed: _onAddPressed,
+                      )),
+                  Expanded(
+                    // Update the following contents whenever the selected workout changes...
+                    child: ValueListenableBuilder<Workout>(
+                      valueListenable: _selectedWorkouts,
+                      builder: (context, value, _) {
+                        // Update the following contents whenever the exercises list is loaded
+                        return StreamBuilder<List<Exercise>?>(
+                            stream: _exercises,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return Text(
+                                  "Error loading exercises: ${snapshot.error}",
+                                  textAlign: TextAlign.center,
+                                );
                               }
-                              return ExerciseListEntry(
-                                  onDelete: () => _onDeletePressed(
-                                      context, value, snapshot.data![index].id),
-                                  onTapped: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                EditWorkoutPage()),
-                                      ),
-                                  title: '${snapshot.data?[index].name}');
-                            },
-                          );
-                        });
-                  },
-                ),
-              ),
-            ]),
+                              if (!snapshot.hasData || snapshot.data == null) {
+                                return Text(
+                                  "Loading Exercises",
+                                  textAlign: TextAlign.center,
+                                );
+                              }
+                              return ListView.builder(
+                                itemCount: value.exercises.length,
+                                itemBuilder: (context, index) {
+                                  if (index >= snapshot.data!.length) {
+                                    return Container();
+                                  }
+                                  return ExerciseListEntry(
+                                      onDelete: () => _onDeletePressed(context,
+                                          value, snapshot.data![index].id),
+                                      onTapped: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EditWorkoutPage()),
+                                          ),
+                                      title: '${snapshot.data?[index].name}');
+                                },
+                              );
+                            });
+                      },
+                    ),
+                  ),
+                ]),
           )
         ],
       ),
     );
+  }
+
+  void _onEditWorkoutPressed() async {
+    Workout currentWorkout = _getWorkoutPerDay(_focusedDay);
+    WorkoutEditDialogResult? result = await showDialog(
+        context: context,
+        builder: (BuildContext context) => WorkoutEditDialog(
+            initialStartTime: currentWorkout.startTime,
+            initialUnworkable: currentWorkout.unworkable));
+
+    if (result == null) return;
+
+    // We have some updates to the workout
+    currentWorkout = _getWorkoutPerDay(_focusedDay);
+    setState(() {
+      currentWorkout.startTime = result.startTime;
+      currentWorkout.unworkable = result.unworkable;
+    });
+
+    await Communication.patchDateSpecificWorkout(currentWorkout.toJson(),
+        _focusedDay.year, _focusedDay.month, _focusedDay.day);
+
+    _refreshCalendar();
   }
 
   void _onAddPressed() async {
