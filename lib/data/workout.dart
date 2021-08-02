@@ -13,21 +13,16 @@ class Workout {
   Workout(this.startTime, this.unworkable, this.exercises, {this.id = ""});
 
   factory Workout.fromJSON(Map json) {
-    if (json["Exercises"] == null) {
-      return new Workout(json["StartTime"] ?? 0, json["Unworkable"], [],
-          id: json["Key"] ?? "");
-    } else {
-      return new Workout(json["StartTime"] ?? 0, json["Unworkable"],
-          json["Exercises"].cast<String>(),
-          id: json["Key"] ?? "");
-    }
+    return new Workout(json["StartTime"] ?? 0, json["Unworkable"] ?? 0,
+        json["Exercises"]?.cast<String>() ?? [],
+        id: json["Key"] ?? "");
   }
 
   Map toJson() {
     return {
-      "startDate": this.startTime,
-      "startMonth": this.unworkable,
-      "workouts": this.exercises,
+      "startTime": this.startTime,
+      "exercises": this.exercises,
+      "unworkable": this.unworkable
     };
   }
 }

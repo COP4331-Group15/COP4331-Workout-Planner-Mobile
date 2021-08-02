@@ -46,9 +46,6 @@ class _TableEventsExampleState extends State<CalendarPage> {
 
   List<Exercise> _getExercisePerDay(DateTime day) {
     Workout dayWorkout = _getWorkoutPerDay(day);
-    /* refreshExercises(dayWorkout, day).then((value) => setState(() {
-          dayWorkout.exercisesContent = value;
-        })); */
     return dayWorkout.exercisesContent;
   }
 
@@ -194,25 +191,17 @@ class _TableEventsExampleState extends State<CalendarPage> {
                       }
                       Exercise newExercise = new Exercise(
                           "", "New Date Specific Exercise", 0, 0, 0, 0);
-
                       String exerciseId = await Communication.postExercise(
                           newExercise.toJson());
                       value.exercises.add(exerciseId);
 
-                      if (isNewWorkout) {
-                        Communication.postDateSpecificWorkout(
-                            value.toJson(),
-                            _selectedDay!.year,
-                            _selectedDay!.month,
-                            _selectedDay!.day);
-                      } else {
-                        Communication.patchDateSpecificWorkout(
-                            value.toJson(),
-                            _selectedDay!.year,
-                            _selectedDay!.month,
-                            _selectedDay!.day);
-                        _refreshCalendar();
-                      }
+                      await Communication.patchDateSpecificWorkout(
+                          value.toJson(),
+                          _selectedDay!.year,
+                          _selectedDay!.month - 1,
+                          _selectedDay!.day - 1);
+
+                      _refreshCalendar();
                     },
                   )),
               Expanded(

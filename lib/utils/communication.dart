@@ -53,7 +53,7 @@ class Communication {
         headers: header,
         body: body);
     print(response.body);
-    return jsonDecode(response.body)["data"]["name"];
+    return jsonDecode(response.body)["data"]["message"];
   }
 
   static Future<String> patchSplit(Map data) async {
@@ -231,7 +231,7 @@ class Communication {
         headers: header,
         body: body);
     print(response.body);
-    return jsonDecode(response.body)["data"]["name"];
+    return jsonDecode(response.body)["message"];
   }
 
   static Future<String> patchWorkout(Map data, String workoutId) async {
