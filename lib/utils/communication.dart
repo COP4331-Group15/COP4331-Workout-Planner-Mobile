@@ -340,4 +340,20 @@ class Communication {
     print(response.body);
     return response.body;
   }
+
+  static Future<String> deleteDateSpecificWorkout(
+      int year, int month, int day) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print('Error: User not signed in');
+      return "";
+    }
+
+    Map<String, String> header = await _getHeader();
+    Response response = await http.delete(
+        Uri.parse("$_baseUrl/calendar/${user.uid}/$year/$month/$day"),
+        headers: header);
+
+    return jsonDecode(response.body)["message"];
+  }
 }

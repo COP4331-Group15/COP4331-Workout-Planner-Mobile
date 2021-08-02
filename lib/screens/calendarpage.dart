@@ -258,8 +258,15 @@ class _TableEventsExampleState extends State<CalendarPage> {
       await Communication.deleteExercise(exerciseId);
       workout.exercises.remove(exerciseId);
 
-      await Communication.patchDateSpecificWorkout(workout.toJson(),
-          _selectedDay!.year, _selectedDay!.month - 1, _selectedDay!.day);
+      if (workout.exercises.isEmpty) {
+        // We've now deleted all exercises for this workout. Delete the workout
+        await Communication.deleteDateSpecificWorkout(
+            _selectedDay!.year, _selectedDay!.month - 1, _selectedDay!.day);
+      } else {
+        // We still have something in the exercises list. Let it exist.
+        await Communication.patchDateSpecificWorkout(workout.toJson(),
+            _selectedDay!.year, _selectedDay!.month - 1, _selectedDay!.day);
+      }
     }
   }
 }
