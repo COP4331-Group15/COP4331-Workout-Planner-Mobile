@@ -7,8 +7,6 @@ import 'package:large_project_app/utils/communication.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../utils/utils.dart';
-
-import 'edit.dart';
 import 'split_page.dart';
 
 class CalendarPage extends StatefulWidget {
@@ -48,9 +46,9 @@ class _TableEventsExampleState extends State<CalendarPage> {
   List<Exercise> _getExercisePerDay(DateTime day) {
     Workout dayWorkout = _getWorkoutPerDay(day);
     refreshExercises(dayWorkout, day).then((value) => setState(() {
-          dayWorkout.exercises_content = value;
+          dayWorkout.exercisesContent = value;
         }));
-    return dayWorkout.exercises_content;
+    return dayWorkout.exercisesContent;
   }
 
   Future<List<Exercise>> refreshExercises(

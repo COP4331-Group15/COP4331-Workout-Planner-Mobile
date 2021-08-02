@@ -107,7 +107,6 @@ class Communication {
 
   static Future<Exercise> getExerciseSpecific(String exerciseId) async {
     User? user = FirebaseAuth.instance.currentUser;
-    String _exerciseId = "";
 
     if (user == null) {
       print('Error: User not signed in');
@@ -187,7 +186,6 @@ class Communication {
 
   static Future<Workout> getWorkoutSpecific(String workoutId) async {
     User? user = FirebaseAuth.instance.currentUser;
-    String _workoutId = "";
 
     if (user == null) {
       print('Error: User not signed in');

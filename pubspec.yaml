@@ -50,6 +50,7 @@ flutter:
     - assets/bodybuilder.png
     - assets/running.png
     - assets/background.jpg
+    - assets/calendar.png
   
   fonts:
     - family: ChunkFive
