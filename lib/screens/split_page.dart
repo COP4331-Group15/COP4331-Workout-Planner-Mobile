@@ -1,9 +1,11 @@
 import 'dart:ui';
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:large_project_app/screens/editExercises.dart';
+import 'package:large_project_app/screens/editWorkout.dart';
 import 'package:large_project_app/utils/communication.dart';
+import 'package:large_project_app/widgets/appbar.dart';
 
 import 'package:large_project_app/data/exercise.dart';
 import 'package:large_project_app/data/split.dart';
@@ -18,11 +20,11 @@ class SplitPage extends StatefulWidget {
 
 class _SplitPageState extends State<SplitPage> {
   List<DragAndDropList> _contents = [];
-  //final TextEditingController _email = new TextEditingController();
-  //final TextEditingController _password = new TextEditingController();
   DateTime selectedDate = DateTime.now();
-  Split Split_d = new Split(-1, -1, -1, []);
+  Split splitD = new Split(-1, -1, -1, []);
   List<Workout> workouts = [];
+  int? selectedWorkoutIndex;
+  int? selectedExerciseIndex;
   Workout? selectedWorkout;
   Exercise? selectedExercise;
   int selectedState = 0; //0 none, 1 workout, 2 exercise
@@ -32,32 +34,26 @@ class _SplitPageState extends State<SplitPage> {
     super.initState();
     debugPrint("Init state");
     //WidgetsBinding.instance?.addPostFrameCallback((_) =>
-    Communication.getSplit().then((value) {
-      setState(() {
-        debugPrint("Loaded Split data");
-        Split_d = value;
-        selectedDate = new DateTime(value.startYear, value.startMonth + 1,
-            value.startDate, 0, 0, 0, 0, 0);
-        for (String w_id in Split_d.workouts) {
-          debugPrint("Loading Workout data: " + w_id);
-          Communication.getWorkoutSpecific(w_id).then((value_w) {
-            setState(() {
-              debugPrint("Loaded Workout data: " + w_id);
-              for (String e_id in value_w.exercises) {
-                Communication.getExerciseSpecific(e_id).then((value_e) {
-                  setState(() {
-                    debugPrint("Loaded Excerise data: " + e_id);
-                    value_e.id = e_id;
-                    value_w.exercises_content.add(value_e);
-                  });
-                });
-              }
-              value_w.id = w_id;
-              workouts.add(value_w);
-            });
-          });
+    Communication.getSplit().then((value) async {
+      debugPrint("Loaded Split data");
+      splitD = value;
+      selectedDate = new DateTime(value.startYear, value.startMonth + 1,
+          value.startDate, 0, 0, 0, 0, 0);
+      for (String w_id in splitD.workouts) {
+        debugPrint("Loading Workout data: " + w_id);
+        Workout valueWorkout = await Communication.getWorkoutSpecific(w_id);
+        debugPrint("Loaded Workout data: " + w_id);
+        for (String e_id in valueWorkout.exercises) {
+          Exercise valueExercise =
+              await Communication.getExerciseSpecific(e_id);
+          debugPrint("Loaded Excerise data: " + e_id);
+          valueExercise.id = e_id;
+          valueWorkout.exercisesContent.add(valueExercise);
         }
-      });
+        valueWorkout.id = w_id;
+        workouts.add(valueWorkout);
+      }
+      setState(() {}); //because it doesn't refresh. Please dont remove this
     });
   }
 
@@ -72,45 +68,58 @@ class _SplitPageState extends State<SplitPage> {
     return Expanded(child: Text("Error"));
   }
 
-  List<DragAndDropItem> getDnDListExercises(Workout w) {
+  List<DragAndDropItem> getDnDListExercises(Workout w, int indexW) {
     List<DragAndDropItem> thelist = [];
-    w.exercises_content.asMap().forEach((index, e) {
+    w.exercisesContent.asMap().forEach((index, e) {
       thelist.add(DragAndDropItem(
         child: Container(
             height: 50,
             width: double.infinity,
             child: Row(
               children: [
-                Text('Header exercise : $index'),
+                Text('   Exercise $index : ' + e.name,
+                    style: TextStyle(
+                        fontFamily: 'Georgia',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.black)),
                 Expanded(child: Text("")),
                 IconButton(
                   icon: const Icon(Icons.circle),
                   tooltip: 'Select',
-                  color: e.icon_color,
+                  color: e.iconColor,
                   onPressed: () {
                     setState(() {
                       //if (w.id == selectedWorkout?.id) {}
                       if (selectedState == 1) {
                         selectedState = 2;
-                        selectedWorkout?.icon_color = Color(0xFF000000);
+                        selectedWorkout?.iconColor = Color(0xFF000000);
+                        selectedExerciseIndex = index;
                         selectedExercise = e;
+                        selectedWorkoutIndex = indexW;
                         selectedWorkout = w;
-                        e.icon_color = Color(0xFF4CAF50);
+                        e.iconColor = Color(0xFF4CAF50);
                       } else {
                         selectedState = 2;
                         if (selectedExercise == null) {
+                          selectedExerciseIndex = index;
                           selectedExercise = e;
+                          selectedWorkoutIndex = indexW;
                           selectedWorkout = w;
-                          e.icon_color = Color(0xFF4CAF50);
+                          e.iconColor = Color(0xFF4CAF50);
                         } else if (e.id != selectedExercise?.id) {
-                          selectedExercise?.icon_color = Color(0xFF000000);
+                          selectedExercise?.iconColor = Color(0xFF000000);
+                          selectedExerciseIndex = index;
                           selectedExercise = e;
+                          selectedWorkoutIndex = indexW;
                           selectedWorkout = w;
-                          e.icon_color = Color(0xFF4CAF50);
+                          e.iconColor = Color(0xFF4CAF50);
                         } else {
                           selectedState = 0;
-                          selectedExercise?.icon_color = Color(0xFF000000);
+                          selectedExercise?.iconColor = Color(0xFF000000);
+                          selectedExerciseIndex = null;
                           selectedExercise = null;
+                          selectedWorkoutIndex = null;
                           selectedWorkout = null;
                         }
                       }
@@ -127,38 +136,47 @@ class _SplitPageState extends State<SplitPage> {
   List<DragAndDropList> allListfunc() {
     List<DragAndDropList> thelist = [];
     workouts.asMap().forEach((index, w) {
-      List<DragAndDropItem> anotherlist = getDnDListExercises(w);
+      List<DragAndDropItem> anotherlist = getDnDListExercises(w, index);
       thelist.add(DragAndDropList(
         header: Container(
             height: 50,
             child: Row(
               children: [
-                Text('Header : $index'),
+                Text(' Workout Day $index : ' + w.startTime.toString(),
+                    style: TextStyle(
+                        fontFamily: 'Georgia',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.black)),
                 Expanded(child: Text("")),
                 IconButton(
                   icon: const Icon(Icons.circle),
                   tooltip: 'Select',
-                  color: w.icon_color,
+                  color: w.iconColor,
                   onPressed: () {
                     setState(() {
                       if (selectedState == 2) {
                         selectedState = 1;
-                        selectedExercise?.icon_color = Color(0xFF000000);
+                        selectedExercise?.iconColor = Color(0xFF000000);
                         selectedExercise = null;
+                        selectedWorkoutIndex = index;
                         selectedWorkout = w;
-                        w.icon_color = Color(0xFF4CAF50);
+                        w.iconColor = Color(0xFF4CAF50);
                       } else {
                         selectedState = 1;
                         if (selectedWorkout == null) {
+                          selectedWorkoutIndex = index;
                           selectedWorkout = w;
-                          w.icon_color = Color(0xFF4CAF50);
+                          w.iconColor = Color(0xFF4CAF50);
                         } else if (w.id != selectedWorkout?.id) {
-                          selectedWorkout?.icon_color = Color(0xFF000000);
+                          selectedWorkout?.iconColor = Color(0xFF000000);
+                          selectedWorkoutIndex = index;
                           selectedWorkout = w;
-                          w.icon_color = Color(0xFF4CAF50);
+                          w.iconColor = Color(0xFF4CAF50);
                         } else {
                           selectedState = 0;
-                          selectedWorkout?.icon_color = Color(0xFF000000);
+                          selectedWorkout?.iconColor = Color(0xFF000000);
+                          selectedWorkoutIndex = null;
                           selectedWorkout = null;
                         }
                       }
@@ -179,10 +197,10 @@ class _SplitPageState extends State<SplitPage> {
 
   void updateSplit() {
     Map data = {
-      "startDate": Split_d.startDate,
-      "startMonth": Split_d.startMonth,
-      "startYear": Split_d.startYear,
-      "workouts": Split_d.workouts,
+      "startDate": splitD.startDate,
+      "startMonth": splitD.startMonth,
+      "startYear": splitD.startYear,
+      "workouts": splitD.workouts,
     };
     Communication.patchSplit(data);
   }
@@ -217,34 +235,39 @@ class _SplitPageState extends State<SplitPage> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        Split_d.startDate = selectedDate.day;
-        Split_d.startMonth = selectedDate.month - 1;
-        Split_d.startYear = selectedDate.year;
+        splitD.startDate = selectedDate.day;
+        splitD.startMonth = selectedDate.month - 1;
+        splitD.startYear = selectedDate.year;
         updateSplit();
       });
     }
   }
 
-  int _count = 0;
   Widget build(BuildContext context) {
     _contents = allListfunc();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Split Page'),
+        title: CustomAppBar(),
       ),
       body: Column(children: [
         Container(
-            height: 300,
+            height: 100,
             color: Color(0xFF282c34),
             width: double.infinity,
             child: Column(
               children: [
-                Expanded(child: Text("hello!")),
                 Container(
                     height: 50,
                     color: Color(0xFF494c54),
                     child: Row(children: <Widget>[
-                      Center(child: Text("Workout:")),
+                      Container(width: 10),
+                      Center(
+                          child: Text("Wo:",
+                              style: TextStyle(
+                                  fontFamily: 'Georgia',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black))),
                       IconButton(
                         icon: const Icon(Icons.remove),
                         tooltip: 'Delete Workout',
@@ -261,14 +284,16 @@ class _SplitPageState extends State<SplitPage> {
                               setState(() {
                                 if (selectedWorkout != null &&
                                     selectedState == 1) {
-                                  Workout selectedWorkout2 = selectedWorkout ??
-                                      new Workout(0, false, []);
+                                  Workout selectedWorkout2 =
+                                      selectedWorkout ?? new Workout(0, 0, []);
+                                  selectedWorkout = null;
+                                  selectedWorkoutIndex = null;
                                   setState(() {
                                     Communication.deleteWorkout(
                                             selectedWorkout2.id)
                                         .then((value) {
                                       setState(() {
-                                        Split_d.workouts.removeWhere(
+                                        splitD.workouts.removeWhere(
                                             (w) => w == selectedWorkout2.id);
                                         workouts.removeWhere(
                                             (w) => w.id == selectedWorkout2.id);
@@ -303,24 +328,30 @@ class _SplitPageState extends State<SplitPage> {
                         tooltip: 'Add Workout',
                         onPressed: () {
                           setState(() {
-                            Workout w_new = new Workout(0, false, []);
+                            Workout newWorkout = new Workout(0, 0, []);
                             Map data = {
-                              "startTime": w_new.startTime,
-                              "unworkable": w_new.unworkable,
-                              "exercises": w_new.exercises
+                              "startTime": newWorkout.startTime,
+                              "unworkable": newWorkout.unworkable,
+                              "exercises": newWorkout.exercises
                             };
                             Communication.postWorkout(data).then((value) {
                               setState(() {
-                                w_new.id = value;
-                                workouts.add(w_new);
-                                Split_d.workouts.add(w_new.id);
+                                newWorkout.id = value;
+                                workouts.add(newWorkout);
+                                splitD.workouts.add(newWorkout.id);
                                 updateSplit();
                               });
                             });
                           });
                         },
                       ),
-                      Center(child: Text("Exercise:")),
+                      Center(
+                          child: Text("Ex:",
+                              style: TextStyle(
+                                  fontFamily: 'Georgia',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.black))),
                       IconButton(
                         icon: const Icon(Icons.remove),
                         tooltip: 'Delete Exercise',
@@ -341,8 +372,10 @@ class _SplitPageState extends State<SplitPage> {
                                   Exercise selectedExercise2 =
                                       selectedExercise ??
                                           new Exercise("", "", 0, 0, 0, 0);
-                                  Workout selectedWorkout2 = selectedWorkout ??
-                                      new Workout(0, false, []);
+                                  selectedExercise = null;
+                                  selectedExerciseIndex = null;
+                                  Workout selectedWorkout2 =
+                                      selectedWorkout ?? new Workout(0, 0, []);
                                   setState(() {
                                     Communication.deleteExercise(
                                             selectedExercise2.id)
@@ -350,7 +383,7 @@ class _SplitPageState extends State<SplitPage> {
                                       setState(() {
                                         selectedWorkout2.exercises.removeWhere(
                                             (e) => e == selectedExercise2.id);
-                                        selectedWorkout2.exercises_content
+                                        selectedWorkout2.exercisesContent
                                             .removeWhere((e) =>
                                                 e.id == selectedExercise2.id);
                                         updateWorkout(selectedWorkout2);
@@ -387,22 +420,25 @@ class _SplitPageState extends State<SplitPage> {
                         onPressed: () {
                           if (selectedWorkout != null) {
                             Workout selectedWorkout2 =
-                                selectedWorkout ?? new Workout(0, false, []);
+                                selectedWorkout ?? new Workout(0, 0, []);
                             setState(() {
-                              Exercise e_new = new Exercise("", "", 0, 0, 0, 0);
+                              Exercise newExercise =
+                                  new Exercise("", "New Exercise", 0, 0, 0, 0);
                               Map data = {
-                                "muscleGroup": e_new.muscleGroup,
-                                "name": e_new.name,
-                                "sets": e_new.sets,
-                                "repetitions": e_new.repetitions,
-                                "duration": e_new.duration,
-                                "resistance": e_new.resistance
+                                "muscleGroup": newExercise.muscleGroup,
+                                "name": newExercise.name,
+                                "sets": newExercise.sets,
+                                "repetitions": newExercise.repetitions,
+                                "duration": newExercise.duration,
+                                "resistance": newExercise.resistance
                               };
                               Communication.postExercise(data).then((value) {
                                 setState(() {
-                                  e_new.id = value;
-                                  selectedWorkout2.exercises.add(e_new.id);
-                                  selectedWorkout2.exercises_content.add(e_new);
+                                  newExercise.id = value;
+                                  selectedWorkout2.exercises
+                                      .add(newExercise.id);
+                                  selectedWorkout2.exercisesContent
+                                      .add(newExercise);
                                   updateWorkout(selectedWorkout2);
                                 });
                               });
@@ -420,7 +456,48 @@ class _SplitPageState extends State<SplitPage> {
                           });
                         },
                       )
-                    ]))
+                    ])),
+                ElevatedButton(
+                    onPressed: () async {
+                      if (selectedState == 1) {
+                        selectedWorkout = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EditWorkoutPage(
+                                  selectedWorkout ?? new Workout(0, 0, []))),
+                        );
+                        workouts[selectedWorkoutIndex ?? -1] =
+                            selectedWorkout ?? new Workout(0, 0, []);
+                        setState(() {});
+                      } else if (selectedState == 2) {
+                        selectedExercise = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => EditExercisePage(
+                                  selectedExercise ??
+                                      new Exercise("", "", 0, 0, 0, 0),
+                                  selectedWorkout ?? new Workout(0, 0, []))),
+                        );
+                        workouts[selectedWorkoutIndex ?? -1]
+                                .exercisesContent[selectedExerciseIndex ?? -1] =
+                            selectedExercise ??
+                                new Exercise("", "", 0, 0, 0, 0);
+                        setState(() {});
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.green,
+                      onPrimary: Colors.green[900],
+                      elevation: 2,
+                    ),
+                    child: Text(
+                      'Edit Selected',
+                      style: TextStyle(
+                          fontFamily: 'Georgia',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.black),
+                    )),
               ],
             )),
         Expanded(
@@ -448,9 +525,9 @@ class _SplitPageState extends State<SplitPage> {
     setState(() {
       var movedItem = workouts[oldListIndex].exercises.removeAt(oldItemIndex);
       var movedItem2 =
-          workouts[oldListIndex].exercises_content.removeAt(oldItemIndex);
+          workouts[oldListIndex].exercisesContent.removeAt(oldItemIndex);
       workouts[newListIndex].exercises.insert(newItemIndex, movedItem);
-      workouts[newListIndex].exercises_content.insert(newItemIndex, movedItem2);
+      workouts[newListIndex].exercisesContent.insert(newItemIndex, movedItem2);
       updateWorkout(workouts[newListIndex]);
       updateWorkout(workouts[oldListIndex]);
     });

@@ -9,7 +9,7 @@ class Exercise {
   int resistance;
 
   String id = "";
-  Color icon_color = Color(0xFF000000);
+  Color iconColor = Color(0xFF000000);
 
   Exercise(this.muscleGroup, this.name, this.sets, this.repetitions,
       this.duration, this.resistance);

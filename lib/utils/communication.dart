@@ -173,7 +173,7 @@ class Communication {
 
     if (user == null) {
       print('Error: User not signed in');
-      return Workout(0, false, []);
+      return Workout(0, 0, []);
     }
 
     Map<String, String> header = await _getHeader();
@@ -190,7 +190,7 @@ class Communication {
 
     if (user == null) {
       print('Error: User not signed in');
-      return Workout(0, false, []);
+      return Workout(0, 0, []);
     }
 
     Map<String, String> header = await _getHeader();

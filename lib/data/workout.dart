@@ -3,12 +3,12 @@ import 'dart:ui';
 
 class Workout {
   int startTime;
-  bool unworkable;
+  int unworkable;
 
-  List<String> exercises;
+  List<String> exercises = [];
   String id = "";
-  Color icon_color = Color(0xFF000000);
-  List<Exercise> exercises_content = [];
+  Color iconColor = Color(0xFF000000);
+  List<Exercise> exercisesContent = [];
 
   Workout(this.startTime, this.unworkable, this.exercises);
 
