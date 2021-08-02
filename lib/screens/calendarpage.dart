@@ -275,7 +275,7 @@ class _TableEventsExampleState extends State<CalendarPage> {
     });
 
     await Communication.patchDateSpecificWorkout(currentWorkout.toJson(),
-        _focusedDay.year, _focusedDay.month, _focusedDay.day);
+        _focusedDay.year, _focusedDay.month - 1, _focusedDay.day);
 
     _refreshCalendar();
   }
