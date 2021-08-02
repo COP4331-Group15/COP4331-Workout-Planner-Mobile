@@ -61,6 +61,17 @@ class _SplitPageState extends State<SplitPage> {
     });
   }
 
+  Expanded getTopEdit() {
+    if (selectedState == 0) {
+      return Expanded(child: Text("Split"));
+    } else if (selectedState == 1) {
+      return Expanded(child: Text("Workout"));
+    } else if (selectedState == 2) {
+      return Expanded(child: Text("Exercise"));
+    }
+    return Expanded(child: Text("Error"));
+  }
+
   List<DragAndDropItem> getDnDListExercises(Workout w) {
     List<DragAndDropItem> thelist = [];
     w.exercises_content.asMap().forEach((index, e) {
@@ -97,6 +108,7 @@ class _SplitPageState extends State<SplitPage> {
                           selectedWorkout = w;
                           e.icon_color = Color(0xFF4CAF50);
                         } else {
+                          selectedState = 0;
                           selectedExercise?.icon_color = Color(0xFF000000);
                           selectedExercise = null;
                           selectedWorkout = null;
@@ -145,6 +157,7 @@ class _SplitPageState extends State<SplitPage> {
                           selectedWorkout = w;
                           w.icon_color = Color(0xFF4CAF50);
                         } else {
+                          selectedState = 0;
                           selectedWorkout?.icon_color = Color(0xFF000000);
                           selectedWorkout = null;
                         }
@@ -188,7 +201,7 @@ class _SplitPageState extends State<SplitPage> {
       "muscleGroup": e.muscleGroup,
       "name": e.name,
       "sets": e.sets,
-      "repititions": e.repititions,
+      "repetitions": e.repetitions,
       "duration": e.duration,
       "resistance": e.resistance
     };
@@ -381,7 +394,7 @@ class _SplitPageState extends State<SplitPage> {
                                 "muscleGroup": e_new.muscleGroup,
                                 "name": e_new.name,
                                 "sets": e_new.sets,
-                                "repititions": e_new.repititions,
+                                "repetitions": e_new.repetitions,
                                 "duration": e_new.duration,
                                 "resistance": e_new.resistance
                               };
