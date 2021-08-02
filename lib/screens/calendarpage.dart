@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:large_project_app/data/calendar.dart';
 import 'package:large_project_app/data/exercise.dart';
 import 'package:large_project_app/data/workout.dart';
 import 'package:large_project_app/utils/communication.dart';
+import 'package:large_project_app/widgets/appbar.dart';
+import 'package:large_project_app/widgets/exercise_list_entry.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../utils/utils.dart';
@@ -16,8 +20,9 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _TableEventsExampleState extends State<CalendarPage> {
-  Future<List<Exercise>> _exercises = Future<List<Exercise>>.value([]);
-  DateTime? _loadedExerciseDay;
+  StreamController<List<Exercise>?> _exerciseStream =
+      StreamController<List<Exercise>?>();
+  late final Stream<List<Exercise>?> _exercises;
   late final ValueNotifier<Workout> _selectedWorkouts;
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
@@ -30,11 +35,11 @@ class _TableEventsExampleState extends State<CalendarPage> {
 
     _selectedDay = _focusedDay;
     _selectedWorkouts = ValueNotifier(_getWorkoutPerDay(_selectedDay!));
+    _exercises = _exerciseStream.stream;
     Communication.getCalendar(_focusedDay.year, _focusedDay.month - 1)
         .then((value) => setState(() {
               userCalendar = value;
-              _exercises = refreshExercises(
-                  _getWorkoutPerDay(_selectedDay!), _selectedDay!);
+              refreshExercises();
             }));
   }
 
@@ -52,8 +57,13 @@ class _TableEventsExampleState extends State<CalendarPage> {
     return dayWorkout.exercisesContent;
   }
 
-  Future<List<Exercise>> refreshExercises(
-      Workout dayWorkout, DateTime day) async {
+  Future<List<Exercise>> refreshExercises() async {
+    // Clear the existing exercises
+    _exerciseStream.add(null);
+
+    Workout dayWorkout = _getWorkoutPerDay(_selectedDay!);
+    DateTime day = _selectedDay!;
+
     List<Exercise> exercises;
     if (dayWorkout.id.isEmpty) {
       // This workout is day specific.
@@ -63,8 +73,8 @@ class _TableEventsExampleState extends State<CalendarPage> {
       // This workout is generic.
       exercises = await Communication.getExercisesPerWorkout(dayWorkout.id);
     }
-
-    _loadedExerciseDay = day;
+    // Update the stream with the new data
+    _exerciseStream.add(exercises);
 
     return exercises;
   }
@@ -73,6 +83,7 @@ class _TableEventsExampleState extends State<CalendarPage> {
     Communication.getCalendar(_focusedDay.year, _focusedDay.month - 1)
         .then((value) => setState(() {
               userCalendar = value;
+              refreshExercises();
             }));
   }
 
@@ -84,7 +95,7 @@ class _TableEventsExampleState extends State<CalendarPage> {
       });
 
       _selectedWorkouts.value = _getWorkoutPerDay(selectedDay);
-      _exercises = refreshExercises(_selectedWorkouts.value, selectedDay);
+      refreshExercises();
     }
   }
 
@@ -117,35 +128,7 @@ class _TableEventsExampleState extends State<CalendarPage> {
           ),
         ],
         shape: Border(bottom: BorderSide(color: Colors.black, width: 2)),
-        title: Container(
-            margin: const EdgeInsets.all(5.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Hercules\'',
-                  style: TextStyle(
-                      fontFamily: 'ChunkFive',
-                      fontSize: 20,
-                      color: Colors.black),
-                ),
-                Container(
-                  margin: const EdgeInsets.all(5.0),
-                  child: Image.asset(
-                    'assets/dumbell.png',
-                    width: 70,
-                    height: 40,
-                  ),
-                ),
-                Text(
-                  'Notebook',
-                  style: TextStyle(
-                      fontFamily: 'ChunkFive',
-                      fontSize: 20,
-                      color: Colors.black),
-                ),
-              ],
-            )),
+        title: CustomAppBar(),
       ),
       body: Column(
         children: [
@@ -187,41 +170,22 @@ class _TableEventsExampleState extends State<CalendarPage> {
                       onPrimary: Colors.green[900],
                       elevation: 10,
                     ),
-                    onPressed: () async {
-                      Workout value = _getWorkoutPerDay(_selectedDay!);
-                      bool isNewWorkout = value.id.isNotEmpty;
-
-                      if (isNewWorkout) {
-                        value = Workout(0, 0, []);
-                      }
-                      Exercise newExercise = new Exercise(
-                          "", "New Date Specific Exercise", 0, 0, 0, 0);
-                      String exerciseId = await Communication.postExercise(
-                          newExercise.toJson());
-                      value.exercises.add(exerciseId);
-
-                      await Communication.patchDateSpecificWorkout(
-                          value.toJson(),
-                          _selectedDay!.year,
-                          _selectedDay!.month - 1,
-                          _selectedDay!.day);
-
-                      _refreshCalendar();
-                    },
+                    onPressed: _onAddPressed,
                   )),
               Expanded(
+                // Update the following contents whenever the selected workout changes...
                 child: ValueListenableBuilder<Workout>(
                   valueListenable: _selectedWorkouts,
                   builder: (context, value, _) {
-                    return FutureBuilder<List<Exercise>>(
-                        future: _exercises,
+                    // Update the following contents whenever the exercises list is loaded
+                    return StreamBuilder<List<Exercise>?>(
+                        stream: _exercises,
                         builder: (context, snapshot) {
                           if (snapshot.hasError) {
                             return Text(
                                 "Error loading exercises: ${snapshot.error}");
                           }
-                          if (!snapshot.hasData ||
-                              _loadedExerciseDay != _selectedDay) {
+                          if (!snapshot.hasData || snapshot.data == null) {
                             return Text("Loading Exercises");
                           }
                           return ListView.builder(
@@ -230,102 +194,16 @@ class _TableEventsExampleState extends State<CalendarPage> {
                               if (index >= snapshot.data!.length) {
                                 return Container();
                               }
-                              return Container(
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 12.0,
-                                    vertical: 4.0,
-                                  ),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.push(
+                              return ExerciseListEntry(
+                                  onDelete: () => _onDeletePressed(
+                                      context, value, snapshot.data![index].id),
+                                  onTapped: () => Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 EditWorkoutPage()),
-                                      );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                            side: BorderSide(
-                                                color: Colors.black,
-                                                width: 1,
-                                                style: BorderStyle.solid),
-                                            borderRadius:
-                                                BorderRadius.circular(20)),
-                                        elevation: 0,
-                                        primary: Colors.white),
-                                    child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Container(
-                                            child: Text(
-                                                '${snapshot.data?[index].name}',
-                                                style: TextStyle(
-                                                    color: Colors.black)),
-                                          ),
-                                          Container(
-                                            margin: EdgeInsets.symmetric(
-                                                horizontal: 5),
-                                            child: ElevatedButton(
-                                              child: Icon(Icons.close),
-                                              style: ElevatedButton.styleFrom(
-                                                primary: Colors.grey[300],
-                                                onPrimary: Colors.grey[400],
-                                                elevation: 0,
-                                                shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        color: Colors.black,
-                                                        width: 1,
-                                                        style:
-                                                            BorderStyle.solid),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20)),
-                                              ),
-                                              onPressed: () async {
-                                                if (value.id.isNotEmpty) {
-                                                  await showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return AlertDialog(
-                                                            title: Text(
-                                                              "Cannot Delete",
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                            ),
-                                                            content: Text(
-                                                                "Exercise is not date specific, Edit this workout in the Split Editor"));
-                                                      });
-                                                  return;
-                                                } else {
-                                                  String? exerciseId =
-                                                      snapshot.data?[index].id;
-                                                  if (exerciseId == null) {
-                                                    return;
-                                                  }
-
-                                                  await Communication
-                                                      .deleteExercise(
-                                                          exerciseId);
-                                                  value.exercises
-                                                      .remove(exerciseId);
-
-                                                  await Communication
-                                                      .patchDateSpecificWorkout(
-                                                          value.toJson(),
-                                                          _selectedDay!.year,
-                                                          _selectedDay!.month -
-                                                              1,
-                                                          _selectedDay!.day);
-                                                }
-                                              },
-                                            ),
-                                          ),
-                                        ]),
-                                  ));
+                                      ),
+                                  title: '${snapshot.data?[index].name}');
                             },
                           );
                         });
@@ -337,5 +215,51 @@ class _TableEventsExampleState extends State<CalendarPage> {
         ],
       ),
     );
+  }
+
+  void _onAddPressed() async {
+    Workout value = _getWorkoutPerDay(_selectedDay!);
+    bool isNewWorkout = value.id.isNotEmpty;
+
+    if (isNewWorkout) {
+      value = Workout(0, 0, []);
+    }
+    Exercise newExercise =
+        new Exercise("", "New Date Specific Exercise", 0, 0, 0, 0);
+    String exerciseId = await Communication.postExercise(newExercise.toJson());
+    value.exercises.add(exerciseId);
+
+    await Communication.patchDateSpecificWorkout(value.toJson(),
+        _selectedDay!.year, _selectedDay!.month - 1, _selectedDay!.day);
+
+    _refreshCalendar();
+  }
+
+  void _onDeletePressed(
+      BuildContext context, Workout workout, String? exerciseId) async {
+    if (workout.id.isNotEmpty) {
+      await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                title: Text(
+                  "Cannot Delete",
+                  textAlign: TextAlign.center,
+                ),
+                content: Text(
+                    "Exercise is not date specific, Edit this workout in the Split Editor"));
+          });
+      return;
+    } else {
+      if (exerciseId == null) {
+        return;
+      }
+
+      await Communication.deleteExercise(exerciseId);
+      workout.exercises.remove(exerciseId);
+
+      await Communication.patchDateSpecificWorkout(workout.toJson(),
+          _selectedDay!.year, _selectedDay!.month - 1, _selectedDay!.day);
+    }
   }
 }
