@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:large_project_app/widgets/appbar.dart';
 
-class EditPage extends StatefulWidget {
+class EditWorkoutPage extends StatefulWidget {
   @override
   _EditPageState createState() => _EditPageState();
 }
 
-class _EditPageState extends State<EditPage> {
+class _EditPageState extends State<EditWorkoutPage> {
   final TextEditingController _startHour = new TextEditingController();
   final TextEditingController _startMinute = new TextEditingController();
   bool isChecked = false;

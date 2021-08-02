@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:large_project_app/data/workout.dart';
+import 'package:large_project_app/data/exercise.dart';
 import 'package:large_project_app/widgets/appbar.dart';
 
-class EditPage extends StatefulWidget {
+class EditExercisePage extends StatefulWidget {
+  EditExercisePage(Exercise? selectedExercise, Workout? selectedWorkout);
+
   @override
   _EditPageState createState() => _EditPageState();
 }
 
-class _EditPageState extends State<EditPage> {
+class _EditPageState extends State<EditExercisePage> {
   bool isChecked = false;
   final TextEditingController _muscleGroup = new TextEditingController();
   final TextEditingController _exerciseName = new TextEditingController();

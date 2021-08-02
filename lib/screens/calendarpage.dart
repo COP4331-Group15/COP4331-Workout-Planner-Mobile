@@ -7,7 +7,8 @@ import 'package:large_project_app/utils/communication.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../utils/utils.dart';
-import 'split_page.dart';
+import 'editWorkout.dart';
+import 'splitpage.dart';
 
 class CalendarPage extends StatefulWidget {
   @override
@@ -40,7 +41,7 @@ class _TableEventsExampleState extends State<CalendarPage> {
       return userCalendar!.days[day.day - 1];
     }
 
-    return Workout(0, true, []);
+    return Workout(0, 0, []);
   }
 
   List<Exercise> _getExercisePerDay(DateTime day) {
@@ -181,9 +182,8 @@ class _TableEventsExampleState extends State<CalendarPage> {
                 child: ValueListenableBuilder<Workout>(
                   valueListenable: _selectedWorkouts,
                   builder: (context, value, _) {
-                    return Text("${value.startTime}");
-                    //return ListView.builder(
-                    /* itemCount: value.length,
+                    return ListView.builder(
+                      itemCount: value.exercises.length,
                       itemBuilder: (context, index) {
                         return Container(
                             margin: const EdgeInsets.symmetric(
@@ -195,7 +195,7 @@ class _TableEventsExampleState extends State<CalendarPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => EditPage()),
+                                      builder: (context) => EditWorkoutPage()),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -212,7 +212,7 @@ class _TableEventsExampleState extends State<CalendarPage> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Container(
-                                      child: Text('${value[index]}',
+                                      child: Text('${value.exercises[index]}',
                                           style:
                                               TextStyle(color: Colors.black)),
                                     ),
@@ -237,9 +237,9 @@ class _TableEventsExampleState extends State<CalendarPage> {
                                       ),
                                     ),
                                   ]),
-                            )); */
-                    //},
-                    //);
+                            ));
+                      },
+                    );
                   },
                 ),
               ),

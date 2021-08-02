@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:large_project_app/screens/editexercises.dart';
 import 'package:large_project_app/utils/communication.dart';
 
 import 'package:large_project_app/data/exercise.dart';
@@ -235,7 +236,28 @@ class _SplitPageState extends State<SplitPage> {
             width: double.infinity,
             child: Column(
               children: [
-                Expanded(child: Text("hello!")),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditExercisePage(
+                                selectedExercise, selectedWorkout)),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.green,
+                      onPrimary: Colors.green[900],
+                      elevation: 2,
+                    ),
+                    child: Text(
+                      'Sign Up',
+                      style: TextStyle(
+                          fontFamily: 'Georgia',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.black),
+                    )),
                 Container(
                     height: 50,
                     color: Color(0xFF494c54),
@@ -257,8 +279,8 @@ class _SplitPageState extends State<SplitPage> {
                               setState(() {
                                 if (selectedWorkout != null &&
                                     selectedState == 1) {
-                                  Workout selectedWorkout2 = selectedWorkout ??
-                                      new Workout(0, false, []);
+                                  Workout selectedWorkout2 =
+                                      selectedWorkout ?? new Workout(0, 0, []);
                                   setState(() {
                                     Communication.deleteWorkout(
                                             selectedWorkout2.id)
@@ -299,7 +321,7 @@ class _SplitPageState extends State<SplitPage> {
                         tooltip: 'Add Workout',
                         onPressed: () {
                           setState(() {
-                            Workout newWorkout = new Workout(0, false, []);
+                            Workout newWorkout = new Workout(0, 0, []);
                             Map data = {
                               "startTime": newWorkout.startTime,
                               "unworkable": newWorkout.unworkable,
@@ -337,8 +359,8 @@ class _SplitPageState extends State<SplitPage> {
                                   Exercise selectedExercise2 =
                                       selectedExercise ??
                                           new Exercise("", "", 0, 0, 0, 0);
-                                  Workout selectedWorkout2 = selectedWorkout ??
-                                      new Workout(0, false, []);
+                                  Workout selectedWorkout2 =
+                                      selectedWorkout ?? new Workout(0, 0, []);
                                   setState(() {
                                     Communication.deleteExercise(
                                             selectedExercise2.id)
@@ -383,7 +405,7 @@ class _SplitPageState extends State<SplitPage> {
                         onPressed: () {
                           if (selectedWorkout != null) {
                             Workout selectedWorkout2 =
-                                selectedWorkout ?? new Workout(0, false, []);
+                                selectedWorkout ?? new Workout(0, 0, []);
                             setState(() {
                               Exercise newExercise =
                                   new Exercise("", "", 0, 0, 0, 0);

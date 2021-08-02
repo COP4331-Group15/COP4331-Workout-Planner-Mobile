@@ -3,7 +3,7 @@ import 'dart:ui';
 
 class Workout {
   int startTime;
-  bool unworkable;
+  int unworkable;
 
   List<String> exercises;
   String id = "";
