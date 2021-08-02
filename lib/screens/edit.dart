@@ -7,8 +7,11 @@ class EditPage extends StatefulWidget {
 }
 
 class _EditPageState extends State<EditPage> {
-  final TextEditingController _startTime = new TextEditingController();
+  final TextEditingController _startHour = new TextEditingController();
+  final TextEditingController _startMinute = new TextEditingController();
   bool isChecked = false;
+  bool isAM = false;
+  bool isPM = true;
   final TextEditingController _muscleGroup = new TextEditingController();
   final TextEditingController _exerciseName = new TextEditingController();
   final TextEditingController _sets = new TextEditingController();
@@ -55,6 +58,7 @@ class _EditPageState extends State<EditPage> {
                   children: [
                 Center(
                     child: Container(
+                  margin: EdgeInsets.all(5),
                   child: Text("Edit Workout",
                       style: TextStyle(
                         fontFamily: "ChunkFive",
@@ -64,24 +68,88 @@ class _EditPageState extends State<EditPage> {
                       border: Border(
                           bottom: BorderSide(color: Colors.black, width: 2))),
                 )),
-                Container(
-                    margin: const EdgeInsets.all(5.0),
-                    height: 50,
-                    child: TextField(
-                      controller: _startTime,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Theme.of(context).accentColor, width: 5.0),
+                Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                  Container(
+                      margin: const EdgeInsets.all(5.0),
+                      height: 75,
+                      width: 75,
+                      child: TextField(
+                        maxLength: 2,
+                        keyboardType: TextInputType.number,
+                        controller: _startHour,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(5.0),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).accentColor,
+                                width: 5.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                                width: 5.0),
+                          ),
+                          hintText: "Hour",
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor,
-                              width: 5.0),
+                      )),
+                  Center(
+                      child: Container(
+                          height: 50,
+                          child: Text(":",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "ChunkFive",
+                                  fontSize: 20)))),
+                  Container(
+                      margin: const EdgeInsets.all(5.0),
+                      height: 75,
+                      width: 75,
+                      child: TextField(
+                        maxLength: 2,
+                        keyboardType: TextInputType.number,
+                        controller: _startMinute,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.all(5.0),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).accentColor,
+                                width: 5.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Theme.of(context).primaryColor,
+                                width: 5.0),
+                          ),
+                          hintText: "Min",
                         ),
-                        hintText: "Start time",
-                      ),
-                    )),
+                      )),
+                  Center(
+                      child: Container(
+                          height: 50,
+                          child: Text("AM:", style: TextStyle(fontSize: 15)))),
+                  Container(
+                      child: Checkbox(
+                          value: isAM,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isPM = false;
+                              isAM = true;
+                            });
+                          })),
+                  Center(
+                      child: Container(
+                          height: 50,
+                          child: Text("PM:", style: TextStyle(fontSize: 15)))),
+                  Container(
+                      child: Checkbox(
+                          value: isPM,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              isPM = true;
+                              isAM = false;
+                            });
+                          }))
+                ]),
                 Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                   Container(
                       margin: const EdgeInsets.all(15.0),
@@ -97,6 +165,7 @@ class _EditPageState extends State<EditPage> {
                 ]),
                 Center(
                     child: Container(
+                  margin: EdgeInsets.all(5),
                   child: Text("Edit Exercise",
                       style: TextStyle(
                         fontFamily: "ChunkFive",
@@ -108,10 +177,12 @@ class _EditPageState extends State<EditPage> {
                 )),
                 Container(
                     margin: const EdgeInsets.all(5.0),
-                    height: 50,
+                    height: 75,
                     child: TextField(
+                      maxLength: 25,
                       controller: _muscleGroup,
                       decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(5.0),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Theme.of(context).accentColor, width: 5.0),
@@ -126,10 +197,12 @@ class _EditPageState extends State<EditPage> {
                     )),
                 Container(
                     margin: const EdgeInsets.all(5.0),
-                    height: 50,
+                    height: 75,
                     child: TextField(
+                      maxLength: 25,
                       controller: _exerciseName,
                       decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(5.0),
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Theme.of(context).accentColor, width: 5.0),
@@ -147,11 +220,14 @@ class _EditPageState extends State<EditPage> {
                     children: [
                       Container(
                           margin: const EdgeInsets.all(5.0),
-                          height: 50,
+                          height: 75,
                           width: 75,
                           child: TextField(
+                            maxLength: 4,
+                            keyboardType: TextInputType.number,
                             controller: _sets,
                             decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(5.0),
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(
                                     color: Theme.of(context).accentColor,
@@ -167,11 +243,14 @@ class _EditPageState extends State<EditPage> {
                           )),
                       Container(
                           margin: const EdgeInsets.all(5.0),
-                          height: 50,
+                          height: 75,
                           width: 75,
                           child: TextField(
+                            maxLength: 4,
+                            keyboardType: TextInputType.number,
                             controller: _repititions,
                             decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(5.0),
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(
                                     color: Theme.of(context).accentColor,
@@ -187,11 +266,14 @@ class _EditPageState extends State<EditPage> {
                           )),
                       Container(
                           margin: const EdgeInsets.all(5.0),
-                          height: 50,
+                          height: 75,
                           width: 75,
                           child: TextField(
+                            maxLength: 4,
+                            keyboardType: TextInputType.number,
                             controller: _duration,
                             decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(5.0),
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(
                                     color: Theme.of(context).accentColor,
@@ -207,11 +289,14 @@ class _EditPageState extends State<EditPage> {
                           )),
                       Container(
                           margin: const EdgeInsets.all(5.0),
-                          height: 50,
+                          height: 75,
                           width: 75,
                           child: TextField(
+                            maxLength: 4,
+                            keyboardType: TextInputType.number,
                             controller: _resistance,
                             decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(5.0),
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(
                                     color: Theme.of(context).accentColor,
