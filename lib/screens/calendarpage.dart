@@ -199,7 +199,7 @@ class _TableEventsExampleState extends State<CalendarPage> {
                           value.toJson(),
                           _selectedDay!.year,
                           _selectedDay!.month - 1,
-                          _selectedDay!.day - 1);
+                          _selectedDay!.day);
 
                       _refreshCalendar();
                     },
