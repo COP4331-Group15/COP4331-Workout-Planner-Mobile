@@ -12,7 +12,8 @@ class Exercise {
   Color iconColor = Color(0xFF000000);
 
   Exercise(this.muscleGroup, this.name, this.sets, this.repetitions,
-      this.duration, this.resistance);
+      this.duration, this.resistance,
+      {this.id = ""});
 
   factory Exercise.fromJSON(Map json) {
     return new Exercise(
@@ -21,7 +22,8 @@ class Exercise {
         json["Sets"] ?? 0,
         json["Repetitions"] ?? 0,
         json["Duration"] ?? 0,
-        json["Resistance"] ?? 0);
+        json["Resistance"] ?? 0,
+        id: json["Key"] ?? "");
   }
 
   Map toJson() {
