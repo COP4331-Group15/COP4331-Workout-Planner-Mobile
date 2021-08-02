@@ -14,10 +14,10 @@ class Workout {
 
   factory Workout.fromJSON(Map json) {
     if (json["Exercises"] == null) {
-      return new Workout(json["StartTime"], json["Unworkable"], [],
+      return new Workout(json["StartTime"] ?? 0, json["Unworkable"], [],
           id: json["Key"] ?? "");
     } else {
-      return new Workout(json["StartTime"], json["Unworkable"],
+      return new Workout(json["StartTime"] ?? 0, json["Unworkable"],
           json["Exercises"].cast<String>(),
           id: json["Key"] ?? "");
     }

@@ -9,11 +9,11 @@ class Split {
 
   factory Split.fromJSON(Map json) {
     if (json["Workouts"] == null) {
-      return new Split(
-          json["StartDate"], json["StartMonth"], json["StartYear"], []);
+      return new Split(json["StartDate"] ?? 0, json["StartMonth"] ?? 0,
+          json["StartYear"] ?? 0, []);
     } else {
-      return new Split(json["StartDate"], json["StartMonth"], json["StartYear"],
-          json["Workouts"].cast<String>());
+      return new Split(json["StartDate"] ?? 0, json["StartMonth"] ?? 0,
+          json["StartYear"] ?? 0, json["Workouts"].cast<String>() ?? []);
     }
   }
 

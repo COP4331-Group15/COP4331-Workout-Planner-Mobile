@@ -251,7 +251,7 @@ class _SplitPageState extends State<SplitPage> {
                       elevation: 2,
                     ),
                     child: Text(
-                      'Sign Up',
+                      'Edit Selected Exercise',
                       style: TextStyle(
                           fontFamily: 'Georgia',
                           fontWeight: FontWeight.bold,

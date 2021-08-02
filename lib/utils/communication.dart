@@ -217,6 +217,23 @@ class Communication {
     return jsonDecode(response.body)["data"]["name"];
   }
 
+  static Future<String> postDateSpecificWorkout(
+      Map data, int year, int month, int day) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print('Error: User not signed in');
+      return "";
+    }
+    var body = json.encode(data);
+    Map<String, String> header = await _getHeader();
+    Response response = await http.post(
+        Uri.parse("$_baseUrl/calendar/${user.uid}/$year/$month/$day/create"),
+        headers: header,
+        body: body);
+    print(response.body);
+    return jsonDecode(response.body)["data"]["name"];
+  }
+
   static Future<String> patchWorkout(Map data, String workoutId) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -227,6 +244,23 @@ class Communication {
     Map<String, String> header = await _getHeader();
     Response response = await http.patch(
         Uri.parse("$_baseUrl/workout/${user.uid}/$workoutId/update"),
+        headers: header,
+        body: body);
+    print(response.body);
+    return response.body;
+  }
+
+  static Future<String> patchDateSpecificWorkout(
+      Map data, int year, int month, int day) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print('Error: User not signed in');
+      return "";
+    }
+    var body = json.encode(data);
+    Map<String, String> header = await _getHeader();
+    Response response = await http.patch(
+        Uri.parse("$_baseUrl/calendar/${user.uid}/$year/$month/$day/update"),
         headers: header,
         body: body);
     print(response.body);

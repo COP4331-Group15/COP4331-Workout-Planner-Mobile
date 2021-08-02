@@ -15,8 +15,13 @@ class Exercise {
       this.duration, this.resistance);
 
   factory Exercise.fromJSON(Map json) {
-    return new Exercise(json["MuscleGroup"], json["Name"], json["Sets"],
-        json["Repetitions"], json["Duration"], json["Resistance"]);
+    return new Exercise(
+        json["MuscleGroup"] ?? 0,
+        json["Name"] ?? "",
+        json["Sets"] ?? 0,
+        json["Repetitions"] ?? 0,
+        json["Duration"] ?? 0,
+        json["Resistance"] ?? 0);
   }
 
   Map toJson() {
