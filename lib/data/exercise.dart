@@ -1,17 +1,22 @@
+import 'dart:ui';
+
 class Exercise {
   String muscleGroup;
   String name;
   int sets;
-  int repititions;
+  int repetitions;
   int duration;
   int resistance;
 
-  Exercise(this.muscleGroup, this.name, this.sets, this.repititions,
+  String id = "";
+  Color icon_color = Color(0xFF000000);
+
+  Exercise(this.muscleGroup, this.name, this.sets, this.repetitions,
       this.duration, this.resistance);
 
   factory Exercise.fromJSON(Map json) {
     return new Exercise(json["MuscleGroup"], json["Name"], json["Sets"],
-        json["Repititions"], json["Duration"], json["Resistance"]);
+        json["Repetitions"], json["Duration"], json["Resistance"]);
   }
 
   Map toJson() {
@@ -19,7 +24,7 @@ class Exercise {
       "muscleGroup": this.muscleGroup,
       "name": this.name,
       "sets": this.sets,
-      "repititions": this.repititions,
+      "repetitions": this.repetitions,
       "duration": this.duration,
       "resistance": this.resistance
     };

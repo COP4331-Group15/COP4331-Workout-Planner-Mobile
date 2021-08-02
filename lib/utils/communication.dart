@@ -24,8 +24,20 @@ class Communication {
     Response response = await http
         .get(Uri.parse("$_baseUrl/split/${user.uid}/"), headers: header);
     print(response.body);
-    Map parse = jsonDecode(response.body);
-    return Split.fromJSON(parse);
+    try {
+      Map parse = jsonDecode(response.body);
+      return Split.fromJSON(parse);
+    } catch (e) {
+      DateTime dt = new DateTime.now();
+      Map data = {
+        "startDate": dt.day,
+        "startMonth": dt.month - 1,
+        "startYear": dt.year,
+        "workouts": [],
+      };
+      postSplit(data);
+      return getSplit();
+    }
   }
 
   static Future<String> postSplit(Map data) async {
@@ -41,7 +53,7 @@ class Communication {
         headers: header,
         body: body);
     print(response.body);
-    return response.body;
+    return jsonDecode(response.body)["data"]["name"];
   }
 
   static Future<String> patchSplit(Map data) async {
@@ -95,6 +107,7 @@ class Communication {
 
   static Future<Exercise> getExerciseSpecific(String exerciseId) async {
     User? user = FirebaseAuth.instance.currentUser;
+    String _exerciseId = "";
 
     if (user == null) {
       print('Error: User not signed in');
@@ -110,7 +123,7 @@ class Communication {
     return Exercise.fromJSON(parse);
   }
 
-  static Future<String> postExercise(Map data, String exerciseId) async {
+  static Future<String> postExercise(Map data) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       print('Error: User not signed in');
@@ -119,11 +132,11 @@ class Communication {
     var body = json.encode(data);
     Map<String, String> header = await _getHeader();
     Response response = await http.post(
-        Uri.parse("$_baseUrl/exercise/${user.uid}/$exerciseId/create"),
+        Uri.parse("$_baseUrl/exercise/${user.uid}/create"),
         headers: header,
         body: body);
     print(response.body);
-    return response.body;
+    return jsonDecode(response.body)["data"]["name"];
   }
 
   static Future<String> patchExercise(Map data, String exerciseId) async {
@@ -161,7 +174,7 @@ class Communication {
 
     if (user == null) {
       print('Error: User not signed in');
-      return Workout("", false, []);
+      return Workout(0, false, []);
     }
 
     Map<String, String> header = await _getHeader();
@@ -172,18 +185,18 @@ class Communication {
     return Workout.fromJSON(parse);
   }
 
-  static Future<Workout> getWorkoutSpecific() async {
+  static Future<Workout> getWorkoutSpecific(String workoutId) async {
     User? user = FirebaseAuth.instance.currentUser;
     String _workoutId = "";
 
     if (user == null) {
       print('Error: User not signed in');
-      return Workout("", false, []);
+      return Workout(0, false, []);
     }
 
     Map<String, String> header = await _getHeader();
     Response response = await http.get(
-        Uri.parse("$_baseUrl/exercise/${user.uid}/$_workoutId"),
+        Uri.parse("$_baseUrl/workout/${user.uid}/$workoutId"),
         headers: header);
     print(response.body);
     Map parse = jsonDecode(response.body);
@@ -203,7 +216,7 @@ class Communication {
         headers: header,
         body: body);
     print(response.body);
-    return response.body;
+    return jsonDecode(response.body)["data"]["name"];
   }
 
   static Future<String> patchWorkout(Map data, String workoutId) async {
@@ -218,20 +231,6 @@ class Communication {
         Uri.parse("$_baseUrl/workout/${user.uid}/$workoutId/update"),
         headers: header,
         body: body);
-    print(response.body);
-    return response.body;
-  }
-
-  static Future<String> deleteWorkout(String workoutId) async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      print('Error: User not signed in');
-      return "";
-    }
-    Map<String, String> header = await _getHeader();
-    Response response = await http.patch(
-        Uri.parse("$_baseUrl/workout/${user.uid}/$workoutId/delete"),
-        headers: header);
     print(response.body);
     return response.body;
   }
@@ -253,13 +252,13 @@ class Communication {
     return Calendar.fromJSON(parse);
   }
 
-  static Future<Map<String, Exercise>> getExerciseFromCalender(
+  static Future<List<Exercise>> getExercisesPerDate(
       int year, int month, int day) async {
     User? user = FirebaseAuth.instance.currentUser;
-
+    List<Exercise> exercises = [];
     if (user == null) {
       print('Error: User not signed in');
-      return {};
+      return exercises;
     }
 
     Map<String, String> header = await _getHeader();
@@ -268,11 +267,45 @@ class Communication {
         headers: header);
     print(response.body);
     Map parse = jsonDecode(response.body);
-    Map<String, Exercise> exerciseList = {};
-    for (MapEntry entry in parse["exercises"]) {
-      exerciseList[entry.key] = Exercise.fromJSON(entry.value);
+    for (Map element in parse["exercises"]) {
+      exercises.add(Exercise.fromJSON(element));
     }
 
-    return exerciseList;
+    return exercises;
+  }
+
+  static Future<List<Exercise>> getExercisesPerWorkout(String workoutId) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    List<Exercise> exercises = [];
+    if (user == null) {
+      print('Error: User not signed in');
+      return exercises;
+    }
+
+    Map<String, String> header = await _getHeader();
+    Response response = await http.get(
+        Uri.parse("$_baseUrl/workout/${user.uid}/$workoutId/exercises"),
+        headers: header);
+    print(response.body);
+    Map parse = jsonDecode(response.body);
+    for (Map element in parse["exercises"]) {
+      exercises.add(Exercise.fromJSON(element));
+    }
+
+    return exercises;
+  }
+
+  static Future<String> deleteWorkout(String workoutId) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      print('Error: User not signed in');
+      return "";
+    }
+    Map<String, String> header = await _getHeader();
+    Response response = await http.delete(
+        Uri.parse("$_baseUrl/workout/${user.uid}/$workoutId/delete"),
+        headers: header);
+    print(response.body);
+    return response.body;
   }
 }

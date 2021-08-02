@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:large_project_app/data/calendar.dart';
+import 'package:large_project_app/data/exercise.dart';
+import 'package:large_project_app/data/workout.dart';
 import 'package:large_project_app/utils/communication.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -15,49 +17,55 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _TableEventsExampleState extends State<CalendarPage> {
-  late final ValueNotifier<List<Event>> _selectedEvents;
+  late final ValueNotifier<Workout> _selectedWorkouts;
   CalendarFormat _calendarFormat = CalendarFormat.month;
-  RangeSelectionMode _rangeSelectionMode = RangeSelectionMode
-      .toggledOff; // Can be toggled on/off by longpressing a date
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  DateTime? _rangeStart;
-  DateTime? _rangeEnd;
   Calendar? userCalendar;
+  List<Exercise>? _exercises;
 
   @override
   void initState() {
     super.initState();
 
     _selectedDay = _focusedDay;
-    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
-    Communication.getSplit().then((value) => print(value));
-    Communication.getExerciseUser().then((value) => print(value));
-    Communication.getWorkoutUser().then((value) => print(value));
+    _selectedWorkouts = ValueNotifier(_getWorkoutPerDay(_selectedDay!));
     Communication.getCalendar(_focusedDay.year, _focusedDay.month - 1)
         .then((value) => setState(() {
               userCalendar = value;
             }));
   }
 
-  @override
-  void dispose() {
-    _selectedEvents.dispose();
-    super.dispose();
+  Workout _getWorkoutPerDay(DateTime day) {
+    // Implementation example
+    if (userCalendar != null) {
+      return userCalendar!.days[day.day - 1];
+    }
+
+    return Workout(0, true, []);
   }
 
-  List<Event> _getEventsForDay(DateTime day) {
-    // Implementation example
-    return kEvents[day] ?? [];
+  List<Exercise> _getExercisePerDay(DateTime day) {
+    Workout dayWorkout = _getWorkoutPerDay(day);
+    refreshExercises(dayWorkout, day).then((value) => setState(() {
+          dayWorkout.exercises_content = value;
+        }));
+    return dayWorkout.exercises_content;
   }
 
-  List<Event> _getEventsForRange(DateTime start, DateTime end) {
-    // Implementation example
-    final days = daysInRange(start, end);
+  Future<List<Exercise>> refreshExercises(
+      Workout dayWorkout, DateTime day) async {
+    List<Exercise> exercises;
+    if (dayWorkout.id.isEmpty) {
+      // This workout is day specific.
+      exercises =
+          await Communication.getExercisesPerDate(day.year, day.month, day.day);
+    } else {
+      // This workout is generic.
+      exercises = await Communication.getExercisesPerWorkout(dayWorkout.id);
+    }
 
-    return [
-      for (final d in days) ..._getEventsForDay(d),
-    ];
+    return exercises;
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
@@ -65,31 +73,9 @@ class _TableEventsExampleState extends State<CalendarPage> {
       setState(() {
         _selectedDay = selectedDay;
         _focusedDay = focusedDay;
-        _rangeStart = null; // Important to clean those
-        _rangeEnd = null;
-        _rangeSelectionMode = RangeSelectionMode.toggledOff;
       });
 
-      _selectedEvents.value = _getEventsForDay(selectedDay);
-    }
-  }
-
-  void _onRangeSelected(DateTime? start, DateTime? end, DateTime focusedDay) {
-    setState(() {
-      _selectedDay = null;
-      _focusedDay = focusedDay;
-      _rangeStart = start;
-      _rangeEnd = end;
-      _rangeSelectionMode = RangeSelectionMode.toggledOn;
-    });
-
-    // `start` or `end` could be null
-    if (start != null && end != null) {
-      _selectedEvents.value = _getEventsForRange(start, end);
-    } else if (start != null) {
-      _selectedEvents.value = _getEventsForDay(start);
-    } else if (end != null) {
-      _selectedEvents.value = _getEventsForDay(end);
+      _selectedWorkouts.value = _getWorkoutPerDay(selectedDay);
     }
   }
 
@@ -154,23 +140,19 @@ class _TableEventsExampleState extends State<CalendarPage> {
       ),
       body: Column(
         children: [
-          TableCalendar<Event>(
+          TableCalendar<Exercise>(
             firstDay: kFirstDay,
             lastDay: kLastDay,
             focusedDay: _focusedDay,
             selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-            rangeStartDay: _rangeStart,
-            rangeEndDay: _rangeEnd,
             calendarFormat: _calendarFormat,
-            rangeSelectionMode: _rangeSelectionMode,
-            eventLoader: _getEventsForDay,
+            eventLoader: _getExercisePerDay,
             startingDayOfWeek: StartingDayOfWeek.monday,
             calendarStyle: CalendarStyle(
               // Use `CalendarStyle` to customize the UI
               outsideDaysVisible: false,
             ),
             onDaySelected: _onDaySelected,
-            onRangeSelected: _onRangeSelected,
             onFormatChanged: (format) {
               if (_calendarFormat != format) {
                 setState(() {
@@ -198,11 +180,12 @@ class _TableEventsExampleState extends State<CalendarPage> {
                     onPressed: () {},
                   )),
               Expanded(
-                child: ValueListenableBuilder<List<Event>>(
-                  valueListenable: _selectedEvents,
+                child: ValueListenableBuilder<Workout>(
+                  valueListenable: _selectedWorkouts,
                   builder: (context, value, _) {
-                    return ListView.builder(
-                      itemCount: value.length,
+                    return Text("${value.startTime}");
+                    //return ListView.builder(
+                    /* itemCount: value.length,
                       itemBuilder: (context, index) {
                         return Container(
                             margin: const EdgeInsets.symmetric(
@@ -256,9 +239,9 @@ class _TableEventsExampleState extends State<CalendarPage> {
                                       ),
                                     ),
                                   ]),
-                            ));
-                      },
-                    );
+                            )); */
+                    //},
+                    //);
                   },
                 ),
               ),
