@@ -152,7 +152,7 @@ class _EditPageState extends State<EditPage> {
                 ]),
                 Row(mainAxisAlignment: MainAxisAlignment.start, children: [
                   Container(
-                      margin: const EdgeInsets.all(15.0),
+                      margin: const EdgeInsets.all(10.0),
                       child: Text("Unworkable:")),
                   Container(
                       child: Checkbox(
