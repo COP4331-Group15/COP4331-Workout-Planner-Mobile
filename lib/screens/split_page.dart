@@ -446,15 +446,21 @@ class _SplitPageState extends State<SplitPage> {
   _onItemReorder(
       int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
     setState(() {
-      var movedItem = _contents[oldListIndex].children.removeAt(oldItemIndex);
-      _contents[newListIndex].children.insert(newItemIndex, movedItem);
+      var movedItem = workouts[oldListIndex].exercises.removeAt(oldItemIndex);
+      var movedItem2 =
+          workouts[oldListIndex].exercises_content.removeAt(oldItemIndex);
+      workouts[newListIndex].exercises.insert(newItemIndex, movedItem);
+      workouts[newListIndex].exercises_content.insert(newItemIndex, movedItem2);
+      updateWorkout(workouts[newListIndex]);
+      updateWorkout(workouts[oldListIndex]);
     });
   }
 
   _onListReorder(int oldListIndex, int newListIndex) {
     setState(() {
-      var movedList = _contents.removeAt(oldListIndex);
-      _contents.insert(newListIndex, movedList);
+      var movedList = workouts.removeAt(oldListIndex);
+      workouts.insert(newListIndex, movedList);
+      updateSplit();
     });
   }
 }

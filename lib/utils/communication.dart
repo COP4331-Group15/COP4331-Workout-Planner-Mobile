@@ -23,8 +23,20 @@ class Communication {
     Response response = await http
         .get(Uri.parse("$_baseUrl/split/${user.uid}/"), headers: header);
     print(response.body);
-    Map parse = jsonDecode(response.body);
-    return Split.fromJSON(parse);
+    try {
+      Map parse = jsonDecode(response.body);
+      return Split.fromJSON(parse);
+    } catch (e) {
+      DateTime dt = new DateTime.now();
+      Map data = {
+        "startDate": dt.day,
+        "startMonth": dt.month - 1,
+        "startYear": dt.year,
+        "workouts": [],
+      };
+      postSplit(data);
+      return getSplit();
+    }
   }
 
   static Future<String> postSplit(Map data) async {
