@@ -21,6 +21,8 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _TableEventsExampleState extends State<CalendarPage> {
+  int heldStartHour = 0;
+  int heldStartMinute = 0;
   StreamController<List<Exercise>?> _exerciseStream =
       StreamController<List<Exercise>?>();
   late final Stream<List<Exercise>?> _exercises;
@@ -174,7 +176,7 @@ class _TableEventsExampleState extends State<CalendarPage> {
                     child: Row(
                       children: [
                         Text(
-                          "${_getWorkoutPerDay(_focusedDay).id.isEmpty ? "Custom " : ""}Workout on ${_selectedDay!.month}/${_selectedDay!.day} | Start time: ${_getWorkoutPerDay(_focusedDay).startTime}",
+                          "${_getWorkoutPerDay(_focusedDay).id.isEmpty ? "Custom " : ""}Workout on ${_selectedDay!.month}/${_selectedDay!.day} | Start time: ${(_getWorkoutPerDay(_focusedDay).startTime / 60).floor()} : ${_getWorkoutPerDay(_focusedDay).startTime % 60}",
                           style: TextStyle(
                               fontSize: 15,
                               fontWeight:
