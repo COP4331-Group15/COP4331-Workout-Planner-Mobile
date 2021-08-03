@@ -118,10 +118,11 @@ class _TableEventsExampleState extends State<CalendarPage> {
             ],
             onSelected: (result) async {
               if (result == 0) {
-                Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => SplitPage()),
                 );
+                _refreshCalendar();
               } else if (result == 1) {
                 await FirebaseAuth.instance.signOut();
               }
