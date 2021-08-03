@@ -77,7 +77,7 @@ class _SplitPageState extends State<SplitPage> {
             width: double.infinity,
             child: Row(
               children: [
-                Text('   Exercise $index : ' + e.name,
+                Text('   Exercise ' + (index + 1).toString() + ' : ' + e.name,
                     style: TextStyle(
                         fontFamily: 'Georgia',
                         fontWeight: FontWeight.bold,
@@ -142,7 +142,7 @@ class _SplitPageState extends State<SplitPage> {
             height: 50,
             child: Row(
               children: [
-                Text(' Workout Day $index : ' + w.startTime.toString(),
+                Text(' Workout Day ' + (index + 1).toString() + ' : ',
                     style: TextStyle(
                         fontFamily: 'Georgia',
                         fontWeight: FontWeight.bold,
