@@ -13,7 +13,7 @@ class CustomAppBar extends StatelessWidget {
             Text(
               'Hercules\'',
               style: TextStyle(
-                  fontFamily: 'ChunkFive', fontSize: 20, color: Colors.black),
+                  fontFamily: 'ChunkFive', fontSize: 15, color: Colors.black),
             ),
             Container(
               margin: const EdgeInsets.all(5.0),
@@ -26,7 +26,7 @@ class CustomAppBar extends StatelessWidget {
             Text(
               'Notebook',
               style: TextStyle(
-                  fontFamily: 'ChunkFive', fontSize: 20, color: Colors.black),
+                  fontFamily: 'ChunkFive', fontSize: 15, color: Colors.black),
             ),
           ],
         ));

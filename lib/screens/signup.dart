@@ -18,7 +18,7 @@ class _SignupPageState extends State<SignupPage> {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
-              email: _email.text, password: _password.text);
+              email: _email.text.trim(), password: _password.text);
       Navigator.pop(context);
     } on FirebaseException catch (e) {
       setState(() {

@@ -235,7 +235,7 @@ class _EditPageState extends State<EditWorkoutPage> {
                         style: TextStyle(
                             fontFamily: 'Georgia',
                             fontWeight: FontWeight.bold,
-                            fontSize: 18,
+                            fontSize: 16,
                             color: Colors.black),
                       ))),
               Container(
@@ -255,7 +255,7 @@ class _EditPageState extends State<EditWorkoutPage> {
                       style: TextStyle(
                           fontFamily: 'Georgia',
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontSize: 16,
                           color: Colors.black),
                     )),
               )
