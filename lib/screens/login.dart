@@ -62,54 +62,83 @@ class _LoginPageState extends State<LoginPage> {
               )),
           Expanded(
               child: ListView(
-                  scrollDirection: Axis.vertical,
-                  padding: const EdgeInsets.all(2),
-                  children: [
-                Container(
+            scrollDirection: Axis.vertical,
+            padding: const EdgeInsets.all(2),
+            children: [
+              Container(
+                margin: const EdgeInsets.all(5.0),
+                child: Text(errorMsg,
+                    style: TextStyle(
+                      color: Colors.red,
+                    )),
+              ),
+              Container(
                   margin: const EdgeInsets.all(5.0),
-                  child: Text(errorMsg,
-                      style: TextStyle(
-                        color: Colors.red,
-                      )),
-                ),
-                Container(
-                    margin: const EdgeInsets.all(5.0),
-                    height: 50,
-                    child: TextField(
-                      controller: _email,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Theme.of(context).accentColor, width: 5.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor,
-                              width: 5.0),
-                        ),
-                        hintText: "Email",
+                  height: 50,
+                  child: TextField(
+                    controller: _email,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Theme.of(context).accentColor, width: 5.0),
                       ),
-                    )),
-                Container(
-                    margin: const EdgeInsets.all(5.0),
-                    height: 50,
-                    child: TextField(
-                      controller: _password,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Theme.of(context).accentColor, width: 5.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor,
-                              width: 5.0),
-                        ),
-                        hintText: "Password",
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor, width: 5.0),
                       ),
-                    )),
-              ])),
+                      hintText: "Email",
+                    ),
+                  )),
+              Container(
+                  margin: const EdgeInsets.all(5.0),
+                  height: 50,
+                  child: TextField(
+                    controller: _password,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Theme.of(context).accentColor, width: 5.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Theme.of(context).primaryColor, width: 5.0),
+                      ),
+                      hintText: "Password",
+                    ),
+                  )),
+              Container(
+                  margin: EdgeInsets.all(5),
+                  child: ElevatedButton(
+                      onPressed: () {
+                        FirebaseAuth.instance
+                            .sendPasswordResetEmail(email: _email.text);
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                  title: Text("Email Sent"),
+                                  content: Text(
+                                    "An email has been sent to the email you entered in the email field which you can use to reset your password.",
+                                    textAlign: TextAlign.center,
+                                  ));
+                            });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.green,
+                        onPrimary: Colors.green[900],
+                        elevation: 2,
+                      ),
+                      child: Text(
+                        'Forgot Password',
+                        style: TextStyle(
+                            fontFamily: 'Georgia',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black),
+                      )))
+            ],
+          )),
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
             Container(
                 margin: const EdgeInsets.all(5.0),

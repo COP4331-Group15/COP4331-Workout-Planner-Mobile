@@ -77,6 +77,8 @@ class _TableEventsExampleState extends State<CalendarPage> {
       // This workout is generic.
       exercises = await Communication.getExercisesPerWorkout(dayWorkout.id);
     }
+
+    _selectedWorkouts.value = _getWorkoutPerDay(_selectedDay!);
     // Update the stream with the new data
     _exerciseStream.add(exercises);
 
