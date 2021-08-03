@@ -47,6 +47,9 @@ class _TableEventsExampleState extends State<CalendarPage> {
   Workout _getWorkoutPerDay(DateTime day) {
     // Implementation example
     if (userCalendar != null) {
+      if (day.day - 1 >= userCalendar!.days.length) {
+        return Workout(0, 0, []);
+      }
       return userCalendar!.days[day.day - 1];
     }
 
@@ -118,10 +121,11 @@ class _TableEventsExampleState extends State<CalendarPage> {
             ],
             onSelected: (result) async {
               if (result == 0) {
-                Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => SplitPage()),
                 );
+                _refreshCalendar();
               } else if (result == 1) {
                 await FirebaseAuth.instance.signOut();
               }
@@ -235,8 +239,10 @@ class _TableEventsExampleState extends State<CalendarPage> {
                                     return Container();
                                   }
                                   return ExerciseListEntry(
-                                      onDelete: () => _onDeletePressed(context,
-                                          value, snapshot.data![index].id),
+                                      onDelete: () async {
+                                        _onDeletePressed(context, value,
+                                            snapshot.data![index].id);
+                                      },
                                       onTapped: () => Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -311,7 +317,9 @@ class _TableEventsExampleState extends State<CalendarPage> {
                   textAlign: TextAlign.center,
                 ),
                 content: Text(
-                    "Exercise is not date specific, Edit this workout in the Split Editor"));
+                  "Exercise is not date specific, Edit this workout in the Split Editor",
+                  textAlign: TextAlign.center,
+                ));
           });
       return;
     } else {
@@ -331,6 +339,8 @@ class _TableEventsExampleState extends State<CalendarPage> {
         await Communication.patchDateSpecificWorkout(workout.toJson(),
             _selectedDay!.year, _selectedDay!.month - 1, _selectedDay!.day);
       }
+
+      _refreshCalendar();
     }
   }
 }
