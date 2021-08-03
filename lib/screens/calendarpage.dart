@@ -245,14 +245,17 @@ class _TableEventsExampleState extends State<CalendarPage> {
                                         _onDeletePressed(context, value,
                                             snapshot.data![index].id);
                                       },
-                                      onTapped: () => Navigator.push(
+                                      onTapped: () async {
+                                        await Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    EditExercisePage(
-                                                        snapshot.data![index])),
-                                          ),
-                                      title: '${snapshot.data?[index].name}');
+                                                    EditExercisePage(snapshot
+                                                        .data![index])));
+                                        _refreshCalendar();
+                                      },
+                                      title:
+                                          '${snapshot.data?[index].name} | ${snapshot.data?[index].muscleGroup}');
                                 },
                               );
                             });
@@ -296,8 +299,7 @@ class _TableEventsExampleState extends State<CalendarPage> {
     if (isNewWorkout) {
       value = Workout(0, 0, []);
     }
-    Exercise newExercise =
-        new Exercise("", "New Date Specific Exercise", 0, 0, 0, 0);
+    Exercise newExercise = new Exercise("None", "New Exercise", 0, 0, 0, 0);
     String exerciseId = await Communication.postExercise(newExercise.toJson());
     value.exercises.add(exerciseId);
 

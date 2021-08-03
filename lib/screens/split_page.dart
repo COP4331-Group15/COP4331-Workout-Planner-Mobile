@@ -267,11 +267,11 @@ class _SplitPageState extends State<SplitPage> {
                       child: Row(children: <Widget>[
                         Container(width: 10),
                         Center(
-                            child: Text("Wo:",
+                            child: Text("Workout:",
                                 style: TextStyle(
                                     fontFamily: 'Georgia',
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 20,
+                                    fontSize: 15,
                                     color: Colors.black))),
                         IconButton(
                           icon: const Icon(Icons.remove),
@@ -354,11 +354,11 @@ class _SplitPageState extends State<SplitPage> {
                           },
                         ),
                         Center(
-                            child: Text("Ex:",
+                            child: Text("Exercise:",
                                 style: TextStyle(
                                     fontFamily: 'Georgia',
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 20,
+                                    fontSize: 15,
                                     color: Colors.black))),
                         IconButton(
                           icon: const Icon(Icons.remove),

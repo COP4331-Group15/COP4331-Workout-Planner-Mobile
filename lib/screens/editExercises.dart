@@ -84,7 +84,7 @@ class _EditPageState extends State<EditExercisePage> {
                         margin: const EdgeInsets.all(5.0),
                         height: 75,
                         child: TextField(
-                          maxLength: 25,
+                          maxLength: 15,
                           controller: _exerciseName,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.all(5.0),
@@ -105,7 +105,7 @@ class _EditPageState extends State<EditExercisePage> {
                         margin: const EdgeInsets.all(5.0),
                         height: 75,
                         child: TextField(
-                          maxLength: 25,
+                          maxLength: 15,
                           controller: _muscleGroup,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.all(5.0),
