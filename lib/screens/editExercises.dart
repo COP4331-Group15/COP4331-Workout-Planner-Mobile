@@ -125,98 +125,142 @@ class _EditPageState extends State<EditExercisePage> {
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                              margin: const EdgeInsets.all(5.0),
-                              height: 75,
-                              width: 75,
-                              child: TextField(
-                                maxLength: 4,
-                                keyboardType: TextInputType.number,
-                                controller: _sets,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.all(5.0),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context).accentColor,
-                                        width: 5.0),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context).primaryColor,
-                                        width: 5.0),
-                                  ),
-                                  hintText: "Sets",
-                                ),
-                              )),
-                          Container(
-                              margin: const EdgeInsets.all(5.0),
-                              height: 75,
-                              width: 75,
-                              child: TextField(
-                                maxLength: 4,
-                                keyboardType: TextInputType.number,
-                                controller: _repetitions,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.all(5.0),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context).accentColor,
-                                        width: 5.0),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context).primaryColor,
-                                        width: 5.0),
-                                  ),
-                                  hintText: "Reps",
-                                ),
-                              )),
-                          Container(
-                              margin: const EdgeInsets.all(5.0),
-                              height: 75,
-                              width: 75,
-                              child: TextField(
-                                maxLength: 4,
-                                keyboardType: TextInputType.number,
-                                controller: _duration,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.all(5.0),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context).accentColor,
-                                        width: 5.0),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context).primaryColor,
-                                        width: 5.0),
-                                  ),
-                                  hintText: "Length",
-                                ),
-                              )),
-                          Container(
-                              margin: const EdgeInsets.all(5.0),
-                              height: 75,
-                              width: 75,
-                              child: TextField(
-                                maxLength: 4,
-                                keyboardType: TextInputType.number,
-                                controller: _resistance,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.all(5.0),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context).accentColor,
-                                        width: 5.0),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Theme.of(context).primaryColor,
-                                        width: 5.0),
-                                  ),
-                                  hintText: "Resist",
-                                ),
-                              )),
+                          Column(
+                            children: [
+                              Container(
+                                  margin: const EdgeInsets.all(5.0),
+                                  height: 25,
+                                  width: 75,
+                                  child: Text("Sets")),
+                              Container(
+                                  margin: const EdgeInsets.all(5.0),
+                                  height: 75,
+                                  width: 75,
+                                  child: TextField(
+                                    maxLength: 4,
+                                    keyboardType: TextInputType.number,
+                                    controller: _sets,
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.all(5.0),
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color:
+                                                Theme.of(context).accentColor,
+                                            width: 5.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            width: 5.0),
+                                      ),
+                                      hintText: "Sets",
+                                    ),
+                                  )),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Container(
+                                  margin: const EdgeInsets.all(5.0),
+                                  height: 25,
+                                  width: 75,
+                                  child: Text("Reps")),
+                              Container(
+                                  margin: const EdgeInsets.all(5.0),
+                                  height: 75,
+                                  width: 75,
+                                  child: TextField(
+                                    maxLength: 4,
+                                    keyboardType: TextInputType.number,
+                                    controller: _repetitions,
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.all(5.0),
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color:
+                                                Theme.of(context).accentColor,
+                                            width: 5.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            width: 5.0),
+                                      ),
+                                      hintText: "Reps",
+                                    ),
+                                  )),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Container(
+                                  margin: const EdgeInsets.all(5.0),
+                                  height: 25,
+                                  width: 75,
+                                  child: Text("Duration")),
+                              Container(
+                                  margin: const EdgeInsets.all(5.0),
+                                  height: 75,
+                                  width: 75,
+                                  child: TextField(
+                                    maxLength: 4,
+                                    keyboardType: TextInputType.number,
+                                    controller: _duration,
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.all(5.0),
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color:
+                                                Theme.of(context).accentColor,
+                                            width: 5.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            width: 5.0),
+                                      ),
+                                      hintText: "Dur",
+                                    ),
+                                  )),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Container(
+                                  margin: const EdgeInsets.all(5.0),
+                                  height: 25,
+                                  width: 75,
+                                  child: Text("Resist")),
+                              Container(
+                                  margin: const EdgeInsets.all(5.0),
+                                  height: 75,
+                                  width: 75,
+                                  child: TextField(
+                                    maxLength: 4,
+                                    keyboardType: TextInputType.number,
+                                    controller: _resistance,
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.all(5.0),
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color:
+                                                Theme.of(context).accentColor,
+                                            width: 5.0),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                            width: 5.0),
+                                      ),
+                                      hintText: "Resist",
+                                    ),
+                                  )),
+                            ],
+                          ),
                         ]),
                     Container(
                         decoration: BoxDecoration(
