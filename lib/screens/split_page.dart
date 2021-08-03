@@ -245,277 +245,288 @@ class _SplitPageState extends State<SplitPage> {
 
   Widget build(BuildContext context) {
     _contents = allListfunc();
-    return Scaffold(
-      appBar: AppBar(
-        title: CustomAppBar(),
-      ),
-      body: Column(children: [
-        Container(
-            height: 100,
-            color: Color(0xFF282c34),
-            width: double.infinity,
-            child: Column(
-              children: [
-                Container(
-                    height: 50,
-                    color: Color(0xFF494c54),
-                    child: Row(children: <Widget>[
-                      Container(width: 10),
-                      Center(
-                          child: Text("Wo:",
-                              style: TextStyle(
-                                  fontFamily: 'Georgia',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black))),
-                      IconButton(
-                        icon: const Icon(Icons.remove),
-                        tooltip: 'Delete Workout',
-                        onPressed: () {
-                          Widget cancelButton = TextButton(
-                            child: Text("Cancel"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          );
-                          Widget continueButton = TextButton(
-                            child: Text("Delete"),
-                            onPressed: () {
-                              setState(() {
-                                if (selectedWorkout != null &&
-                                    selectedState == 1) {
-                                  Workout selectedWorkout2 =
-                                      selectedWorkout ?? new Workout(0, 0, []);
-                                  selectedWorkout = null;
-                                  selectedWorkoutIndex = null;
-                                  setState(() {
-                                    Communication.deleteWorkout(
-                                            selectedWorkout2.id)
-                                        .then((value) {
-                                      setState(() {
-                                        splitD.workouts.removeWhere(
-                                            (w) => w == selectedWorkout2.id);
-                                        workouts.removeWhere(
-                                            (w) => w.id == selectedWorkout2.id);
-                                        updateSplit();
-                                        Navigator.pop(context);
-                                      });
-                                    });
-                                  });
-                                }
-                              });
-                            },
-                          );
-                          AlertDialog alert = AlertDialog(
-                            title: Text("Delete Workout"),
-                            content: Text(
-                                "Do you want to delete the selected workout?"),
-                            actions: [
-                              cancelButton,
-                              continueButton,
-                            ],
-                          );
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return alert;
-                            },
-                          );
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        tooltip: 'Add Workout',
-                        onPressed: () {
-                          setState(() {
-                            Workout newWorkout = new Workout(0, 0, []);
-                            Map data = {
-                              "startTime": newWorkout.startTime,
-                              "unworkable": newWorkout.unworkable,
-                              "exercises": newWorkout.exercises
-                            };
-                            Communication.postWorkout(data).then((value) {
-                              setState(() {
-                                newWorkout.id = value;
-                                workouts.add(newWorkout);
-                                splitD.workouts.add(newWorkout.id);
-                                updateSplit();
-                              });
-                            });
-                          });
-                        },
-                      ),
-                      Center(
-                          child: Text("Ex:",
-                              style: TextStyle(
-                                  fontFamily: 'Georgia',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: Colors.black))),
-                      IconButton(
-                        icon: const Icon(Icons.remove),
-                        tooltip: 'Delete Exercise',
-                        onPressed: () {
-                          Widget cancelButton = TextButton(
-                            child: Text("Cancel"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          );
-                          Widget continueButton = TextButton(
-                            child: Text("Delete"),
-                            onPressed: () {
-                              setState(() {
-                                if (selectedExercise != null &&
-                                    selectedWorkout != null &&
-                                    selectedState == 2) {
-                                  Exercise selectedExercise2 =
-                                      selectedExercise ??
-                                          new Exercise("", "", 0, 0, 0, 0);
-                                  selectedExercise = null;
-                                  selectedExerciseIndex = null;
-                                  Workout selectedWorkout2 =
-                                      selectedWorkout ?? new Workout(0, 0, []);
-                                  setState(() {
-                                    Communication.deleteExercise(
-                                            selectedExercise2.id)
-                                        .then((value) {
-                                      setState(() {
-                                        selectedWorkout2.exercises.removeWhere(
-                                            (e) => e == selectedExercise2.id);
-                                        selectedWorkout2.exercisesContent
-                                            .removeWhere((e) =>
-                                                e.id == selectedExercise2.id);
-                                        updateWorkout(selectedWorkout2);
-                                        Navigator.pop(context);
-                                      });
-                                    });
-                                  });
-                                } else {
-                                  Navigator.pop(context);
-                                }
-                              });
-                            },
-                          );
-                          AlertDialog alert = AlertDialog(
-                            title: Text("Delete Exercise"),
-                            content: Text(
-                                "Do you want to delete the selected exercise?"),
-                            actions: [
-                              cancelButton,
-                              continueButton,
-                            ],
-                          );
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return alert;
-                            },
-                          );
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.add),
-                        tooltip: 'Add Exercise',
-                        onPressed: () {
-                          if (selectedWorkout != null) {
-                            Workout selectedWorkout2 =
-                                selectedWorkout ?? new Workout(0, 0, []);
-                            setState(() {
-                              Exercise newExercise =
-                                  new Exercise("", "New Exercise", 0, 0, 0, 0);
-                              Map data = {
-                                "muscleGroup": newExercise.muscleGroup,
-                                "name": newExercise.name,
-                                "sets": newExercise.sets,
-                                "repetitions": newExercise.repetitions,
-                                "duration": newExercise.duration,
-                                "resistance": newExercise.resistance
-                              };
-                              Communication.postExercise(data).then((value) {
+    return WillPopScope(
+      onWillPop: () {
+        Navigator.pop(context); //, workouts);
+        return new Future(() => true);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: CustomAppBar(),
+        ),
+        body: Column(children: [
+          Container(
+              height: 100,
+              color: Color(0xFF282c34),
+              width: double.infinity,
+              child: Column(
+                children: [
+                  Container(
+                      height: 50,
+                      color: Color(0xFF494c54),
+                      child: Row(children: <Widget>[
+                        Container(width: 10),
+                        Center(
+                            child: Text("Wo:",
+                                style: TextStyle(
+                                    fontFamily: 'Georgia',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.black))),
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          tooltip: 'Delete Workout',
+                          onPressed: () {
+                            Widget cancelButton = TextButton(
+                              child: Text("Cancel"),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            );
+                            Widget continueButton = TextButton(
+                              child: Text("Delete"),
+                              onPressed: () {
                                 setState(() {
-                                  newExercise.id = value;
-                                  selectedWorkout2.exercises
-                                      .add(newExercise.id);
-                                  selectedWorkout2.exercisesContent
-                                      .add(newExercise);
-                                  updateWorkout(selectedWorkout2);
+                                  if (selectedWorkout != null &&
+                                      selectedState == 1) {
+                                    Workout selectedWorkout2 =
+                                        selectedWorkout ??
+                                            new Workout(0, 0, []);
+                                    selectedWorkout = null;
+                                    selectedWorkoutIndex = null;
+                                    setState(() {
+                                      Communication.deleteWorkout(
+                                              selectedWorkout2.id)
+                                          .then((value) {
+                                        setState(() {
+                                          splitD.workouts.removeWhere(
+                                              (w) => w == selectedWorkout2.id);
+                                          workouts.removeWhere((w) =>
+                                              w.id == selectedWorkout2.id);
+                                          updateSplit();
+                                          Navigator.pop(context);
+                                        });
+                                      });
+                                    });
+                                  } else {
+                                    Navigator.pop(context);
+                                  }
+                                });
+                              },
+                            );
+                            AlertDialog alert = AlertDialog(
+                              title: Text("Delete Workout"),
+                              content: Text(
+                                  "Do you want to delete the selected workout?"),
+                              actions: [
+                                cancelButton,
+                                continueButton,
+                              ],
+                            );
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return alert;
+                              },
+                            );
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          tooltip: 'Add Workout',
+                          onPressed: () {
+                            setState(() {
+                              Workout newWorkout = new Workout(0, 0, []);
+                              Map data = {
+                                "startTime": newWorkout.startTime,
+                                "unworkable": newWorkout.unworkable,
+                                "exercises": newWorkout.exercises
+                              };
+                              Communication.postWorkout(data).then((value) {
+                                setState(() {
+                                  newWorkout.id = value;
+                                  workouts.add(newWorkout);
+                                  splitD.workouts.add(newWorkout.id);
+                                  updateSplit();
                                 });
                               });
                             });
-                          }
-                        },
+                          },
+                        ),
+                        Center(
+                            child: Text("Ex:",
+                                style: TextStyle(
+                                    fontFamily: 'Georgia',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.black))),
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          tooltip: 'Delete Exercise',
+                          onPressed: () {
+                            Widget cancelButton = TextButton(
+                              child: Text("Cancel"),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            );
+                            Widget continueButton = TextButton(
+                              child: Text("Delete"),
+                              onPressed: () {
+                                setState(() {
+                                  if (selectedExercise != null &&
+                                      selectedWorkout != null &&
+                                      selectedState == 2) {
+                                    Exercise selectedExercise2 =
+                                        selectedExercise ??
+                                            new Exercise("", "", 0, 0, 0, 0);
+                                    selectedExercise = null;
+                                    selectedExerciseIndex = null;
+                                    Workout selectedWorkout2 =
+                                        selectedWorkout ??
+                                            new Workout(0, 0, []);
+                                    setState(() {
+                                      Communication.deleteExercise(
+                                              selectedExercise2.id)
+                                          .then((value) {
+                                        setState(() {
+                                          selectedWorkout2.exercises
+                                              .removeWhere((e) =>
+                                                  e == selectedExercise2.id);
+                                          selectedWorkout2.exercisesContent
+                                              .removeWhere((e) =>
+                                                  e.id == selectedExercise2.id);
+                                          updateWorkout(selectedWorkout2);
+                                          Navigator.pop(context);
+                                        });
+                                      });
+                                    });
+                                  } else {
+                                    Navigator.pop(context);
+                                  }
+                                });
+                              },
+                            );
+                            AlertDialog alert = AlertDialog(
+                              title: Text("Delete Exercise"),
+                              content: Text(
+                                  "Do you want to delete the selected exercise?"),
+                              actions: [
+                                cancelButton,
+                                continueButton,
+                              ],
+                            );
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return alert;
+                              },
+                            );
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          tooltip: 'Add Exercise',
+                          onPressed: () {
+                            if (selectedWorkout != null) {
+                              Workout selectedWorkout2 =
+                                  selectedWorkout ?? new Workout(0, 0, []);
+                              setState(() {
+                                Exercise newExercise = new Exercise(
+                                    "", "New Exercise", 0, 0, 0, 0);
+                                Map data = {
+                                  "muscleGroup": newExercise.muscleGroup,
+                                  "name": newExercise.name,
+                                  "sets": newExercise.sets,
+                                  "repetitions": newExercise.repetitions,
+                                  "duration": newExercise.duration,
+                                  "resistance": newExercise.resistance
+                                };
+                                Communication.postExercise(data).then((value) {
+                                  setState(() {
+                                    newExercise.id = value;
+                                    selectedWorkout2.exercises
+                                        .add(newExercise.id);
+                                    selectedWorkout2.exercisesContent
+                                        .add(newExercise);
+                                    updateWorkout(selectedWorkout2);
+                                  });
+                                });
+                              });
+                            }
+                          },
+                        ),
+                        Expanded(child: Text("")),
+                        IconButton(
+                          icon: const Icon(Icons.calendar_today),
+                          tooltip: 'Change split start date',
+                          onPressed: () {
+                            setState(() {
+                              _selectDate(context);
+                            });
+                          },
+                        )
+                      ])),
+                  ElevatedButton(
+                      onPressed: () async {
+                        if (selectedState == 1) {
+                          selectedWorkout = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditWorkoutPage(
+                                    selectedWorkout ?? new Workout(0, 0, []))),
+                          );
+                          workouts[selectedWorkoutIndex ?? -1] =
+                              selectedWorkout ?? new Workout(0, 0, []);
+                          setState(() {});
+                        } else if (selectedState == 2) {
+                          selectedExercise = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditExercisePage(
+                                    selectedExercise ??
+                                        new Exercise("", "", 0, 0, 0, 0))),
+                          );
+                          workouts[selectedWorkoutIndex ?? -1].exercisesContent[
+                                  selectedExerciseIndex ?? -1] =
+                              selectedExercise ??
+                                  new Exercise("", "", 0, 0, 0, 0);
+                          setState(() {});
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.green,
+                        onPrimary: Colors.green[900],
+                        elevation: 2,
                       ),
-                      Expanded(child: Text("")),
-                      IconButton(
-                        icon: const Icon(Icons.calendar_today),
-                        tooltip: 'Change split start date',
-                        onPressed: () {
-                          setState(() {
-                            _selectDate(context);
-                          });
-                        },
-                      )
-                    ])),
-                ElevatedButton(
-                    onPressed: () async {
-                      if (selectedState == 1) {
-                        selectedWorkout = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => EditWorkoutPage(
-                                  selectedWorkout ?? new Workout(0, 0, []))),
-                        );
-                        workouts[selectedWorkoutIndex ?? -1] =
-                            selectedWorkout ?? new Workout(0, 0, []);
-                        setState(() {});
-                      } else if (selectedState == 2) {
-                        selectedExercise = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => EditExercisePage(
-                                  selectedExercise ??
-                                      new Exercise("", "", 0, 0, 0, 0))),
-                        );
-                        workouts[selectedWorkoutIndex ?? -1]
-                                .exercisesContent[selectedExerciseIndex ?? -1] =
-                            selectedExercise ??
-                                new Exercise("", "", 0, 0, 0, 0);
-                        setState(() {});
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.green,
-                      onPrimary: Colors.green[900],
-                      elevation: 2,
-                    ),
-                    child: Text(
-                      'Edit Selected',
-                      style: TextStyle(
-                          fontFamily: 'Georgia',
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.black),
-                    )),
-              ],
-            )),
-        Expanded(
-          child: DragAndDropLists(
-            //color: Color(0xFF282c34),
-            children: _contents,
-            onItemReorder: _onItemReorder,
-            onListReorder: _onListReorder,
-          ),
-        )
-      ]),
-      backgroundColor: Colors.white,
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     setState(() => {_count++});
-      //   },
-      //   tooltip: 'Increment Counter',
-      //   child: const Icon(Icons.add),
-      // ),
+                      child: Text(
+                        'Edit Selected',
+                        style: TextStyle(
+                            fontFamily: 'Georgia',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.black),
+                      )),
+                ],
+              )),
+          Expanded(
+            child: DragAndDropLists(
+              //color: Color(0xFF282c34),
+              children: _contents,
+              onItemReorder: _onItemReorder,
+              onListReorder: _onListReorder,
+            ),
+          )
+        ]),
+        backgroundColor: Colors.white,
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     setState(() => {_count++});
+        //   },
+        //   tooltip: 'Increment Counter',
+        //   child: const Icon(Icons.add),
+        // ),
+      ),
     );
   }
 
@@ -536,6 +547,8 @@ class _SplitPageState extends State<SplitPage> {
     setState(() {
       var movedList = workouts.removeAt(oldListIndex);
       workouts.insert(newListIndex, movedList);
+      var movedList2 = splitD.workouts.removeAt(oldListIndex);
+      splitD.workouts.insert(newListIndex, movedList2);
       updateSplit();
     });
   }
