@@ -16,12 +16,6 @@ class _EditPageState extends State<EditWorkoutPage> {
   bool isChecked = false;
   bool isAM = false;
   bool isPM = true;
-  final TextEditingController _muscleGroup = new TextEditingController();
-  final TextEditingController _exerciseName = new TextEditingController();
-  final TextEditingController _sets = new TextEditingController();
-  final TextEditingController _repititions = new TextEditingController();
-  final TextEditingController _duration = new TextEditingController();
-  final TextEditingController _resistance = new TextEditingController();
   @override
   void initState() {
     super.initState();

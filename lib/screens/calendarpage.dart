@@ -13,7 +13,7 @@ import 'package:large_project_app/widgets/workout_edit_dialog.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../utils/utils.dart';
-import 'splitpage.dart';
+import 'split_page.dart';
 
 class CalendarPage extends StatefulWidget {
   @override
