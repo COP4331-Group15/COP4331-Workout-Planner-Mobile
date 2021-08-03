@@ -174,14 +174,11 @@ class _TableEventsExampleState extends State<CalendarPage> {
                     child: Row(
                       children: [
                         Text(
-                          "${_getWorkoutPerDay(_focusedDay).id.isEmpty ? "Custom " : ""}Workout on ${_selectedDay!.month}/${_selectedDay!.day}",
-                          style: Theme.of(context)
-                              .textTheme
-                              .subtitle1!
-                              .copyWith(
-                                  fontWeight: (_getWorkoutPerDay(_focusedDay)
-                                          .id
-                                          .isEmpty)
+                          "${_getWorkoutPerDay(_focusedDay).id.isEmpty ? "Custom " : ""}Workout on ${_selectedDay!.month}/${_selectedDay!.day} | Start time: ${_getWorkoutPerDay(_focusedDay).startTime}",
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight:
+                                  (_getWorkoutPerDay(_focusedDay).id.isEmpty)
                                       ? FontWeight.bold
                                       : FontWeight.normal),
                           textAlign: TextAlign.start,
